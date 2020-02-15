@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="KLineChartView">
+        <attr name="kc_text_size" format="dimension"/>
+        <attr name="kc_text_color" format="color"/>
+
+        <attr name="kc_line_width" format="dimension"/>
+
+        <attr name="kc_kline_width" format="dimension"/>
+        <attr name="kc_kline_inner_width" format="dimension"/>
+
+        <attr name="kc_background_color" format="color"/>
+        <attr name="kc_selected_line_color" format="color"/>
+        <attr name="kc_selected_line_width" format="dimension"/>
+        <attr name="kc_grid_line_width" format="dimension"/>
+        <attr name="kc_grid_line_color" format="color"/>
+        <attr name="kc_grid_text_color" format="color"/>
+        <attr name="kc_point_width" format="dimension"/>
+
+        <attr name="kc_kline_decreasing_color" format="color"/>
+        <attr name="kc_kline_increasing_color" format="color"/>
+
+        <attr name="kc_rsi1_color" format="color"/>
+        <attr name="kc_rsi2_color" format="color"/>
+        <attr name="kc_ris3_color" format="color"/>
+
+        <attr name="kc_ma5_color" format="color"/>
+        <attr name="kc_ma10_color" format="color"/>
+        <attr name="kc_ma20_color" format="color"/>
+        <attr name="kc_candle_width" format="dimension"/>
+        <attr name="kc_candle_line_width" format="dimension"/>
+        <attr name="kc_selector_background_color" format="color"/>
+        <attr name="kc_selector_text_size" format="dimension"/>
+        <attr name="kc_candle_solid" format="boolean"/>
+    </declare-styleable>
+</resources>

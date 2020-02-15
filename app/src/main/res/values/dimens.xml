@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="chart_text_size">10sp</dimen>
+
+    <dimen name="chart_selector_text_size">12sp</dimen>
+    <dimen name="chart_selector_line_width">4dp</dimen>
+
+
+    <dimen name="chart_kline_inner_width">1dp</dimen>
+    <dimen name="chart_kline_width">4dp</dimen>
+
+    <dimen name="chart_rsi_line_width">0.5dp</dimen>
+
+    <dimen name="chart_grid_line_width">1dp</dimen>
+
+
+</resources>
