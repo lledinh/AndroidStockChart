@@ -1,9 +1,7 @@
 package com.ledinh.androidstockchart.chart2;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -17,17 +15,13 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 
 import com.ledinh.androidstockchart.R;
-import com.ledinh.androidstockchart.chart.Kline;
-import com.ledinh.androidstockchart.chart.RSISet;
 import com.ledinh.androidstockchart.chart.Viewport;
 
-import java.sql.Timestamp;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class Chart extends View implements
         GestureDetector.OnGestureListener {
@@ -52,9 +46,10 @@ public class Chart extends View implements
     private int maxIndex;
 
     private float spaceBetweenValue;
-    private float screenDataCount;
+    private int screenDataCount;
 
     private List<DrawingElement> drawingElementList;
+    private Map<Integer, DrawingElement> positionDrawingElement;
 
     public Chart(Context context) {
         super(context);
@@ -95,10 +90,70 @@ public class Chart extends View implements
         mScroller = new OverScroller(getContext());
     }
 
+    public void addDrawingElementPos(DrawingElement drawingElement, int pos, boolean expand) {
+        if (drawingElementList != null) {
+            int drawingElementHeight;
+            int drawingElementWidth = viewport.getViewWidth();
+
+            if (drawingElementList.size() == 0) {
+                drawingElementHeight = viewport.getViewHeight();
+            }
+            else {
+                drawingElementHeight = viewport.getViewHeight() / positionDrawingElement.size();
+            }
+
+            positionDrawingElement.put(pos, drawingElement);
+
+            Viewport drawingElementViewport = new Viewport(drawingElementWidth, drawingElementHeight);
+            drawingElement.setViewport(drawingElementViewport);
+            drawingElement.setSpaceBetweenValue(spaceBetweenValue);
+            drawingElementList.add(drawingElement);
+
+            int height = 0;
+
+            for (int i = 0; i < drawingElementList.size(); i++) {
+                DrawingElement drawingElement1 = drawingElementList.get(i);
+                drawingElement1.setViewportPosition(0, height, viewport.getViewWidth(), height + drawingElementHeight);
+                height += drawingElementHeight;
+            }
+        }
+
+    }
+
     public void addDrawingElement(DrawingElement drawingElement) {
-        drawingElement.viewport = viewport;
-        drawingElement.setSpaceBetweenValue(spaceBetweenValue);
-        drawingElementList.add(drawingElement);
+
+        int weightSum = 0;
+        for (int i = 0; i < drawingElementList.size(); i++) {
+            DrawingElement drawingElement1 = drawingElementList.get(i);
+            weightSum += drawingElement1.getWeight();
+        }
+        weightSum += drawingElement.getWeight();
+        int oneUnit = viewport.getViewHeight() / weightSum;
+
+        if (drawingElementList != null) {
+            int drawingElementHeight;
+            int drawingElementWidth = viewport.getViewWidth();
+
+            if (drawingElementList.size() == 0) {
+                drawingElementHeight = viewport.getViewHeight();
+            }
+            else {
+                drawingElementHeight = viewport.getViewHeight() / drawingElementList.size();
+            }
+
+            Viewport drawingElementViewport = new Viewport(drawingElementWidth, drawingElementHeight);
+            drawingElement.setViewport(drawingElementViewport);
+            drawingElement.setSpaceBetweenValue(spaceBetweenValue);
+            drawingElementList.add(drawingElement);
+
+            int height = 0;
+
+            for (int i = 0; i < drawingElementList.size(); i++) {
+                DrawingElement drawingElement1 = drawingElementList.get(i);
+                drawingElement1.setViewportPosition(0, height, viewport.getViewWidth(), height + drawingElementHeight);
+                height += drawingElementHeight;
+            }
+        }
     }
 
     public void setGridLineColor(int color) {
@@ -135,12 +190,33 @@ public class Chart extends View implements
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         setViewport(w,h);
+
         spaceBetweenValue = (float) viewport.getViewWidth() / screenDataCount;
 
-        for (DrawingElement drawingElement : drawingElementList) {
-            drawingElement.viewport = viewport;
-            drawingElement.setSpaceBetweenValue(spaceBetweenValue);
+        int drawingElementHeight;
+        if (drawingElementList.size() == 0) {
+            drawingElementHeight = viewport.getViewHeight();
         }
+        else {
+            drawingElementHeight = viewport.getViewHeight() / drawingElementList.size();
+        }
+
+        int height = 0;
+
+        for (int i = 0; i < drawingElementList.size(); i++) {
+            DrawingElement drawingElement1 = drawingElementList.get(i);
+            drawingElement1.getViewport().setViewWidth(viewport.getViewWidth());
+            drawingElement1.getViewport().setViewHeight(viewport.getViewHeight());
+            drawingElement1.setViewportPosition(0, height, viewport.getViewWidth(), height + drawingElementHeight);
+            height += drawingElementHeight;
+
+            drawingElement1.setSpaceBetweenValue(spaceBetweenValue);
+        }
+
+//        for (DrawingElement drawingElement : drawingElementList) {
+//            drawingElement.viewport = viewport;
+//            drawingElement.setSpaceBetweenValue(spaceBetweenValue);
+//        }
     }
 
     public void setScreenDataCount(int count) {
@@ -173,9 +249,6 @@ public class Chart extends View implements
     private long calculateDate(int index) {
         switch (timeUnit) {
             case ONE_DAY:
-                Log.d("Chart", "calculateDate index = " + index);
-                Log.d("Chart", "calculateDate maxIndex = " + maxIndex);
-                Log.d("Chart", "calculateDate lastDate = " + lastDate);
                 return ((lastDate / 1000) - ((maxIndex - index) * 86400)) * 1000;
 
             case ONE_HOUR:
@@ -217,22 +290,12 @@ public class Chart extends View implements
     }
 
     @Override
-    public void invalidate() {
-        super.invalidate();
-
-        for (DrawingElement drawingElement: drawingElementList) {
-
-        }
-    }
-
-    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawColor(ContextCompat.getColor(getContext(), R.color.chart_background));
 
         drawGrid(canvas);
 
-//        canvas.translate(translateX - (1 * spaceBetweenValue), 0);
         for (int i = 0; i < drawingElementList.size(); i++) {
             drawingElementList.get(i).draw(canvas, translateX);
         }
@@ -290,6 +353,15 @@ public class Chart extends View implements
                 scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
             } else {
                 mScroller.forceFinished(true);
+            }
+        }
+
+        for (DrawingElement drawingElement: drawingElementList) {
+            if (drawingElement.isAutoScale()) {
+                int lastValueIndex = getIndexFromX((int) (viewport.getViewWidth() - translateX));
+                int firstValueIndex = (int) (lastValueIndex - getScreenDataCount());
+                drawingElement.updateAxisRangeFromIndex(firstValueIndex, lastValueIndex);
+                drawingElement.getyAxis().extendRange(20);
             }
         }
     }

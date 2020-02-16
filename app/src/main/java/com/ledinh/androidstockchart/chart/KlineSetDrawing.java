@@ -3,7 +3,7 @@ package com.ledinh.androidstockchart.chart;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
-import com.ledinh.androidstockchart.R;
+import com.ledinh.androidstockchart.chart2.KlinesSet;
 
 public class KlineSetDrawing {
     private Paint paintIncreasing;

@@ -39,6 +39,14 @@ public class Viewport {
         viewingPosition = new Rect(0,0,viewWidth,viewHeight);
     }
 
+    public float getViewportHeight() {
+        return viewingPosition.bottom - viewingPosition.top;
+    }
+
+    public float getViewportWidth() {
+        return viewingPosition.right - viewingPosition.left;
+    }
+
     public void translate(float x, float y) {
         translateX = x;
         translateY = y;

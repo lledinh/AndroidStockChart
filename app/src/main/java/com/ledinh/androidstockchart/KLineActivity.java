@@ -1,10 +1,8 @@
 package com.ledinh.androidstockchart;
 
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.util.Log;
 
-import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -19,10 +17,9 @@ import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.ledinh.androidstockchart.chart.KLineChartView;
 import com.ledinh.androidstockchart.chart.Kline;
-import com.ledinh.androidstockchart.chart.KlinesSet;
-import com.ledinh.androidstockchart.chart.RSIChartView;
-import com.ledinh.androidstockchart.chart.RSISet;
-import com.ledinh.androidstockchart.chart2.DrawingElement;
+import com.ledinh.androidstockchart.chart2.DrawingRSIChart;
+import com.ledinh.androidstockchart.chart2.KlinesSet;
+import com.ledinh.androidstockchart.chart2.RSISet;
 import com.ledinh.androidstockchart.chart2.DrawingKlineChart;
 import com.ledinh.androidstockchart.chart2.TimeUnit;
 import com.ledinh.androidstockchart.chart2.Chart;
@@ -36,7 +33,7 @@ import java.util.List;
 
 public class KLineActivity extends AppCompatActivity {
 
-    KLineChartView kLineChartView;
+//    KLineChartView kLineChartView;
 //    RSIChartView rsiChartView;
     Chart chart;
 
@@ -49,7 +46,7 @@ public class KLineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kline);
 
-        kLineChartView = findViewById(R.id.kchart_view);
+//        kLineChartView = findViewById(R.id.kchart_view);
 //        rsiChartView = findViewById(R.id.rsichart_view);
 
         chart = findViewById(R.id.chart2);
@@ -73,22 +70,54 @@ public class KLineActivity extends AppCompatActivity {
         klineDrawing.setKlineInnerLineWidth(getDimension(R.dimen.chart_kline_inner_width));
         klineDrawing.setSelectedKlineColor(ContextCompat.getColor(this, R.color.chart_yellow));
         klineDrawing.setSelectedKlineLineWidth(getDimension(R.dimen.chart_selector_line_width));
+        klineDrawing.setAutoScale(true);
+
+        final DrawingRSIChart drawingRSI = new DrawingRSIChart(chart);
+        drawingRSI.setLineColor(ContextCompat.getColor(this, R.color.chart_rsi1));
+        drawingRSI.setLineWidth(getDimension(R.dimen.chart_kline_inner_width));
+        drawingRSI.setAutoScale(true);
+//        drawingRSI.setAxisMin(0);
+//        drawingRSI.setAxisMax(100);
+
+
+        final DrawingRSIChart drawingRSI2 = new DrawingRSIChart(chart);
+        drawingRSI2.setLineColor(ContextCompat.getColor(this, R.color.chart_rsi2));
+        drawingRSI2.setLineWidth(getDimension(R.dimen.chart_kline_inner_width));
+        drawingRSI2.setAutoScale(false);
+        drawingRSI2.setAxisMin(0);
+        drawingRSI2.setAxisMax(100);
 
         chart.addDrawingElement(klineDrawing);
+        chart.addDrawingElement(drawingRSI);
+        chart.addDrawingElement(drawingRSI2);
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                KlinesSet klinesSet = new KlinesSet(klines, com.ledinh.androidstockchart.chart.TimeUnit.ONE_DAY);
-                kLineChartView.setKlinesSet(klinesSet);
-                kLineChartView.invalidate();
+                KlinesSet klinesSet = new KlinesSet(klines, TimeUnit.ONE_DAY);
+                RSISet rsiSet1 = Calculator.rsi(klinesSet, 5);
+                RSISet rsiSet2 = Calculator.rsi(klinesSet, 14);
 
-                klineDrawing.setKlinesSet(klinesSet);
+                klineDrawing.setChartData(klinesSet);
                 chart.invalidate();
 
-                RSISet rsiSet1 = Calculator.rsi(klinesSet, 5);
-                RSISet rsiSet2 = Calculator.rsi(klinesSet, 9);
-                RSISet rsiSet3 = Calculator.rsi(klinesSet, 14);
+                drawingRSI.setChartData(rsiSet1);
+                chart.invalidate();
+
+                drawingRSI2.setChartData(rsiSet2);
+                chart.invalidate();
+
+
+//                KlinesSet klinesSet = new KlinesSet(klines, TimeUnit.ONE_DAY);
+//                kLineChartView.setKlinesSet(klinesSet);
+//                kLineChartView.invalidate();
+//
+//                klineDrawing.setKlinesSet(klinesSet);
+//                chart.invalidate();
+//
+//                RSISet rsiSet1 = Calculator.rsi(klinesSet, 5);
+//                RSISet rsiSet2 = Calculator.rsi(klinesSet, 9);
+//                RSISet rsiSet3 = Calculator.rsi(klinesSet, 14);
 
 //                rsiChartView.addRsiSet(rsiSet1);
 //                rsiChartView.addRsiSet(rsiSet2);

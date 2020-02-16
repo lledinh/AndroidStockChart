@@ -1,9 +1,9 @@
 package com.ledinh.androidstockchart.math;
 
 import com.ledinh.androidstockchart.chart.Kline;
-import com.ledinh.androidstockchart.chart.KlinesSet;
+import com.ledinh.androidstockchart.chart2.KlinesSet;
 import com.ledinh.androidstockchart.chart.RSI;
-import com.ledinh.androidstockchart.chart.RSISet;
+import com.ledinh.androidstockchart.chart2.RSISet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +49,6 @@ public class Calculator {
             values.add(rsi);
         }
 
-        return new RSISet(values, klinesSet.getUnit(), smoothingPeriod);
+        return new RSISet(values, klinesSet.getTimeUnit(), smoothingPeriod);
     }
 }

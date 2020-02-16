@@ -1,12 +1,10 @@
 package com.ledinh.androidstockchart.chart;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -20,7 +18,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 
 import com.ledinh.androidstockchart.R;
-import com.ledinh.androidstockchart.chart.Kline;
+import com.ledinh.androidstockchart.chart2.KlinesSet;
+import com.ledinh.androidstockchart.chart2.TimeUnit;
 
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
@@ -225,7 +224,7 @@ public class KLineChartView extends RelativeLayout implements
         yAxis.setAxisMin(axisMin);
         yAxis.setAxisMax(axisMax);
 
-        Log.d("KLineChartView", "setAxisRange axisMax = " + axisMax + " axisMin = " + axisMin);
+        Log.d("KLineChartView", "updateAxisRangeFromIndex axisMax = " + axisMax + " axisMin = " + axisMin);
     }
 
     @Override

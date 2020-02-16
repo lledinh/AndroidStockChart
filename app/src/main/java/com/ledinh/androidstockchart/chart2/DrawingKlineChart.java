@@ -2,18 +2,11 @@ package com.ledinh.androidstockchart.chart2;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 
-import com.ledinh.androidstockchart.R;
 import com.ledinh.androidstockchart.chart.Kline;
-import com.ledinh.androidstockchart.chart.KlinesSet;
 
-import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 public class DrawingKlineChart extends DrawingElement<KlinesSet> {
     private Paint paintIncreasing;
@@ -24,7 +17,6 @@ public class DrawingKlineChart extends DrawingElement<KlinesSet> {
     private float klineInnerLineWidth;
 
     private float lastDate;
-    private int gridRows;
 
     public DrawingKlineChart(Chart chart) {
         super(chart);
@@ -35,7 +27,6 @@ public class DrawingKlineChart extends DrawingElement<KlinesSet> {
 
         klineWidth = 4;
         klineInnerLineWidth = 1;
-        gridRows = 4;
         lastDate = 0;
     }
 
@@ -43,7 +34,7 @@ public class DrawingKlineChart extends DrawingElement<KlinesSet> {
     public void draw(Canvas canvas, float translateX) {
         canvas.save();
         canvas.translate(translateX - (1 * spaceBetweenValue), 0);
-        drawKlines(canvas, viewport.getViewWidth());
+        drawKlines(canvas, viewport.getViewportWidth());
         canvas.restore();
 
         drawValues(canvas);
@@ -56,7 +47,7 @@ public class DrawingKlineChart extends DrawingElement<KlinesSet> {
         float textHeight = fm.descent - fm.ascent;
         float baseLine = (textHeight - fm.bottom - fm.top) / 2;
 
-        float rowSpace = viewport.getViewHeight() / gridRows;
+        float rowSpace = viewport.getViewportHeight() / gridRows;
         float range = (float) ((yAxis.getAxisMax() - yAxis.getAxisMin()) / gridRows);
 
         for (int i = 0; i <= gridRows; i++) {
@@ -89,10 +80,10 @@ public class DrawingKlineChart extends DrawingElement<KlinesSet> {
                 p = paintDecreasing;
             }
 
-            double axisPosOpen = yAxis.getInvertedAxisPos(kLine.open) * viewport.getViewHeight();
-            double axisPosClose = yAxis.getInvertedAxisPos(kLine.close) * viewport.getViewHeight();
-            double axisPosHigh = yAxis.getInvertedAxisPos(kLine.high) * viewport.getViewHeight();
-            double axisPosLow = yAxis.getInvertedAxisPos(kLine.low) * viewport.getViewHeight();
+            double axisPosOpen = viewport.getViewingPosition().top + yAxis.getInvertedAxisPos(kLine.open) * viewport.getViewportHeight();
+            double axisPosClose = viewport.getViewingPosition().top + yAxis.getInvertedAxisPos(kLine.close) * viewport.getViewportHeight();
+            double axisPosHigh = viewport.getViewingPosition().top + yAxis.getInvertedAxisPos(kLine.high) * viewport.getViewportHeight();
+            double axisPosLow = viewport.getViewingPosition().top + yAxis.getInvertedAxisPos(kLine.low) * viewport.getViewportHeight();
 
             drawKline(canvas, x, axisPosOpen, axisPosClose, axisPosHigh, axisPosLow, p);
             x -= spaceBetweenValue;
@@ -132,23 +123,29 @@ public class DrawingKlineChart extends DrawingElement<KlinesSet> {
         this.yAxis = yAxis;
     }
 
-    public void setKlinesSet(KlinesSet klinesSet) {
+    @Override
+    public void setChartData(KlinesSet klinesSet) {
         this.chartData = klinesSet;
-        List<Kline> klines = klinesSet.getValues();
-        setAxisRange(klines.size() - 1);
+        int lastIndex = chartData.getDataSize() - 1;
+        if (autoScale) {
+            updateAxisRangeFromIndex((int) (lastIndex - chart.getScreenDataCount()), lastIndex);
+        }
+        else {
+            updateAxisRangeFromIndex(0, chartData.getDataSize() - 1);
+        }
         yAxis.extendRange(20);
-//        int klineIndexFromX = chart.getIndexFromX((int) (viewport.getViewWidth() - translateX));
     }
 
-    public void setAxisRange(int lastIndex) {
+    @Override
+    public void updateAxisRangeFromIndex(int firstValueIndex, int lastValueIndex) {
 
-        Kline kline = chartData.getValues().get(lastIndex);
+        Kline kline = chartData.getValues().get(lastValueIndex);
         lastDate = kline.openTime;
 
         double axisMin = Float.MAX_VALUE;
         double axisMax = Float.MIN_VALUE;
 
-        for (int i = lastIndex; i > lastIndex - chart.getScreenDataCount(); i--) {
+        for (int i = lastValueIndex; i > firstValueIndex; i--) {
             Kline kLine = chartData.getValues().get(i);
 
             if (kLine.close < axisMin) {
@@ -180,7 +177,5 @@ public class DrawingKlineChart extends DrawingElement<KlinesSet> {
 
         yAxis.setAxisMin(axisMin);
         yAxis.setAxisMax(axisMax);
-
-        Log.d("KLineChartView", "setAxisRange axisMax = " + axisMax + " axisMin = " + axisMin);
     }
 }

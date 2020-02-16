@@ -1,11 +1,17 @@
 package com.ledinh.androidstockchart.chart2;
 
 import android.graphics.Canvas;
+import android.graphics.Rect;
 
 import com.ledinh.androidstockchart.chart.Viewport;
 
-public abstract class DrawingElement<E extends ChartData> {
+public abstract class DrawingElement<E extends ChartSet> {
     protected Chart chart;
+
+    protected int weight;
+
+    protected boolean autoScale;
+    protected int gridRows;
 
     protected Viewport viewport;
     protected float spaceBetweenValue;
@@ -17,10 +23,27 @@ public abstract class DrawingElement<E extends ChartData> {
     public abstract void drawValues(Canvas canvas);
     public abstract void drawTimeline(Canvas canvas);
     public abstract int getMaxIndex();
+    public abstract void updateAxisRangeFromIndex(int firstValueIndex, int lastValueIndex);
 
     public DrawingElement(Chart chart) {
         this.yAxis = new YAxis();
         this.chart = chart;
+        autoScale = true;
+        gridRows = 4;
+        weight = 1;
+    }
+
+
+    public void setViewportPosition(int left, int top, int right, int bottom) {
+        viewport.setViewingPosition(new Rect(left, top, right, bottom));
+    }
+
+    public void setAxisMin(double min) {
+        yAxis.setAxisMin(min);
+    }
+
+    public void setAxisMax(double max) {
+        yAxis.setAxisMax(max);
     }
 
     public Chart getChart() {
@@ -43,15 +66,47 @@ public abstract class DrawingElement<E extends ChartData> {
         return chartData;
     }
 
-    public int getIndexFromX(int x) {
-        int delta = (int) ((viewport.getViewWidth() - x) / spaceBetweenValue);
-        int index = getMaxIndex() - delta;
-
-        return index;
+    public void setChartData(E chartData) {
+        this.chartData = chartData;
     }
 
     public void setSpaceBetweenValue(float spaceBetweenValue) {
         this.spaceBetweenValue = spaceBetweenValue;
     }
 
+    public boolean isAutoScale() {
+        return autoScale;
+    }
+
+    public void setAutoScale(boolean autoScale) {
+        this.autoScale = autoScale;
+    }
+
+    public void setChart(Chart chart) {
+        this.chart = chart;
+    }
+
+    public void setGridRows(int gridRows) {
+        this.gridRows = gridRows;
+    }
+
+    public void setViewport(Viewport viewport) {
+        this.viewport = viewport;
+    }
+
+    public void setyAxis(YAxis yAxis) {
+        this.yAxis = yAxis;
+    }
+
+    public int getGridRows() {
+        return gridRows;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
 }

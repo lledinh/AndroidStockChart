@@ -8,9 +8,9 @@
     <color name="chart_green">#35DF7E</color>
     <color name="chart_yellow">#E7A520</color>
 
-    <color name="chart_ma5">#18CCF6</color>
-    <color name="chart_ma10">#FE5EDF</color>
-    <color name="chart_ma20">#E7A520</color>
+    <color name="chart_rsi1">#18CCF6</color>
+    <color name="chart_rsi2">#FE5EDF</color>
+    <color name="chart_rsi3">#E7A520</color>
     <color name="chart_white">#fff</color>
 
     <color name="chart_background">#202326</color>
