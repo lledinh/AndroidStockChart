@@ -1,9 +1,13 @@
 package com.ledinh.androidstockchart;
 
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.ColorRes;
+import androidx.annotation.DimenRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -18,7 +22,10 @@ import com.ledinh.androidstockchart.chart.Kline;
 import com.ledinh.androidstockchart.chart.KlinesSet;
 import com.ledinh.androidstockchart.chart.RSIChartView;
 import com.ledinh.androidstockchart.chart.RSISet;
-import com.ledinh.androidstockchart.chart.TimeUnit;
+import com.ledinh.androidstockchart.chart2.DrawingElement;
+import com.ledinh.androidstockchart.chart2.DrawingKlineChart;
+import com.ledinh.androidstockchart.chart2.TimeUnit;
+import com.ledinh.androidstockchart.chart2.Chart;
 import com.ledinh.androidstockchart.math.Calculator;
 
 import java.io.BufferedReader;
@@ -30,7 +37,12 @@ import java.util.List;
 public class KLineActivity extends AppCompatActivity {
 
     KLineChartView kLineChartView;
-    RSIChartView rsiChartView;
+//    RSIChartView rsiChartView;
+    Chart chart;
+
+    private float getDimension(@DimenRes int resId) {
+        return getResources().getDimension(resId);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,27 +50,49 @@ public class KLineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_kline);
 
         kLineChartView = findViewById(R.id.kchart_view);
-        rsiChartView = findViewById(R.id.rsichart_view);
+//        rsiChartView = findViewById(R.id.rsichart_view);
+
+        chart = findViewById(R.id.chart2);
 
         final List<Kline> klines = readFileSample();
+
+        chart.setTimeUnit(TimeUnit.ONE_DAY);
+        chart.setMaxIndex(klines.size() - 1);
+        chart.setLastDate(klines.get(klines.size() - 1).openTime);
+        chart.setScreenDataCount(60);
+
+        chart.setBackgroundColor(ContextCompat.getColor(this, R.color.chart_background));
+        chart.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
+        chart.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
+        chart.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
+
+        final DrawingKlineChart klineDrawing = new DrawingKlineChart(chart);
+        klineDrawing.setDecreasingColor(ContextCompat.getColor(this, R.color.chart_red));
+        klineDrawing.setIncreasingColor(ContextCompat.getColor(this, R.color.chart_green));
+        klineDrawing.setKlineWidth(getDimension(R.dimen.chart_kline_width));
+        klineDrawing.setKlineInnerLineWidth(getDimension(R.dimen.chart_kline_inner_width));
+        klineDrawing.setSelectedKlineColor(ContextCompat.getColor(this, R.color.chart_yellow));
+        klineDrawing.setSelectedKlineLineWidth(getDimension(R.dimen.chart_selector_line_width));
+
+        chart.addDrawingElement(klineDrawing);
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.d("KLineActivity", "OK");
-                Log.d("KLineActivity", "klines size = " + klines.size());
-
-                KlinesSet klinesSet = new KlinesSet(klines, TimeUnit.ONE_DAY);
+                KlinesSet klinesSet = new KlinesSet(klines, com.ledinh.androidstockchart.chart.TimeUnit.ONE_DAY);
                 kLineChartView.setKlinesSet(klinesSet);
                 kLineChartView.invalidate();
+
+                klineDrawing.setKlinesSet(klinesSet);
+                chart.invalidate();
 
                 RSISet rsiSet1 = Calculator.rsi(klinesSet, 5);
                 RSISet rsiSet2 = Calculator.rsi(klinesSet, 9);
                 RSISet rsiSet3 = Calculator.rsi(klinesSet, 14);
 
-                rsiChartView.addRsiSet(rsiSet1);
-                rsiChartView.addRsiSet(rsiSet2);
-                rsiChartView.addRsiSet(rsiSet3);
+//                rsiChartView.addRsiSet(rsiSet1);
+//                rsiChartView.addRsiSet(rsiSet2);
+//                rsiChartView.addRsiSet(rsiSet3);
 
                 Log.d("KLineActivity", "klines size = " + klines.size());
 

@@ -122,7 +122,7 @@ public class RSIChartView extends View implements
 
         if (rsiSets != null) {
             canvas.save();
-            canvas.translate(translateX - 1 * (lineWidth + lineWidth / 2f), 0);
+//            canvas.translate(translateX - 1 * (lineWidth + lineWidth / 2f), 0);
             for (RSISet rsiSet : rsiSets) {
                 drawRSI(canvas, rsiSet);
             }
@@ -230,4 +230,33 @@ public class RSIChartView extends View implements
         }
     }
 
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return false;
+    }
 }

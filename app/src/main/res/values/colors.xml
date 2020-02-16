@@ -6,6 +6,7 @@
 
     <color name="chart_red">#DF3536</color>
     <color name="chart_green">#35DF7E</color>
+    <color name="chart_yellow">#E7A520</color>
 
     <color name="chart_ma5">#18CCF6</color>
     <color name="chart_ma10">#FE5EDF</color>
