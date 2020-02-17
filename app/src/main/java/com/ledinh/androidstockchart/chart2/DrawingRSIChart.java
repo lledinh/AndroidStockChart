@@ -23,11 +23,11 @@ public class DrawingRSIChart extends DrawingElement<RSISet> {
 
     @Override
     public void draw(Canvas canvas, float translateX) {
+        drawRows(canvas);
         canvas.save();
         canvas.translate(translateX - (1 * spaceBetweenValue), 0);
         drawLines(canvas, viewport.getViewportWidth());
         canvas.restore();
-
         drawValues(canvas);
         drawTimeline(canvas);
     }
@@ -44,25 +44,6 @@ public class DrawingRSIChart extends DrawingElement<RSISet> {
 
             canvas.drawLine(x, (float) axisPos, x - spaceBetweenValue, (float) axisPos1, paintLine);
             x -= spaceBetweenValue;
-        }
-    }
-
-    @Override
-    public void drawValues(Canvas canvas) {
-        Paint.FontMetrics fm = chart.getPaintTextAxis().getFontMetrics();
-        float textHeight = fm.descent - fm.ascent;
-        float baseLine = (textHeight - fm.bottom - fm.top) / 2;
-
-        float rowSpace = viewport.getViewportHeight() / gridRows;
-        float range = (float) ((yAxis.getAxisMax() - yAxis.getAxisMin()) / gridRows);
-        Log.d("RANGE", "yAxis.getAxisMin = " + yAxis.getAxisMin());
-        Log.d("RANGE", "yAxis.getAxisMax = " + yAxis.getAxisMax());
-        Log.d("RANGE", "range = " + range);
-
-        for (int i = 0; i <= gridRows; i++) {
-            NumberFormat formatter = new DecimalFormat("#00");
-            String value = formatter.format(yAxis.getAxisMax() - (i * range));
-            canvas.drawText(value, 0, viewport.getViewingPosition().top + (i * rowSpace) + baseLine, chart.getPaintTextAxis());
         }
     }
 

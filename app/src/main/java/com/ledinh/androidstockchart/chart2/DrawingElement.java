@@ -1,9 +1,13 @@
 package com.ledinh.androidstockchart.chart2;
 
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 
 import com.ledinh.androidstockchart.chart.Viewport;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public abstract class DrawingElement<E extends ChartSet> {
     protected Chart chart;
@@ -20,10 +24,46 @@ public abstract class DrawingElement<E extends ChartSet> {
     protected E chartData;
 
     public abstract void draw(Canvas canvas, float translateX);
-    public abstract void drawValues(Canvas canvas);
     public abstract void drawTimeline(Canvas canvas);
     public abstract int getMaxIndex();
     public abstract void updateAxisRangeFromIndex(int firstValueIndex, int lastValueIndex);
+
+    public void drawRows(Canvas canvas) {
+        float rowSpace = viewport.getViewportHeight() / gridRows;
+
+        for (int i = 0; i <= gridRows; i++) {
+            Paint p;
+            if (i == 0 || i == gridRows) {
+                p = chart.getPaintViewSeparator();
+            }
+            else {
+                p = chart.getPaintGridLine();
+            }
+
+            canvas.drawLine(viewport.getViewingPosition().left, viewport.getViewingPosition().top + (i * rowSpace), viewport.getViewingPosition().right, viewport.getViewingPosition().top + (i * rowSpace), p);
+        }
+    }
+
+    public void drawValues(Canvas canvas) {
+        Paint.FontMetrics fm = chart.getPaintTextAxis().getFontMetrics();
+        float textHeight = fm.descent - fm.ascent;
+        float baseLine = (textHeight - fm.bottom - fm.top) / 2;
+
+        float rowSpace = viewport.getViewportHeight() / gridRows;
+        float range = (float) ((yAxis.getAxisMax() - yAxis.getAxisMin()) / gridRows);
+
+        for (int i = 0; i <= gridRows; i++) {
+            NumberFormat formatter = new DecimalFormat("#0");
+            String value = formatter.format(yAxis.getAxisMax() - (i * range));
+
+            if (i < gridRows) {
+                canvas.drawText(value, 0, viewport.getViewingPosition().top + (i * rowSpace) + baseLine, chart.getPaintTextAxis());
+            }
+            else {
+                canvas.drawText(value, 0, viewport.getViewingPosition().top + (i * rowSpace), chart.getPaintTextAxis());
+            }
+        }
+    }
 
     public DrawingElement(Chart chart) {
         this.yAxis = new YAxis();
@@ -32,7 +72,6 @@ public abstract class DrawingElement<E extends ChartSet> {
         gridRows = 4;
         weight = 1;
     }
-
 
     public void setViewportPosition(int left, int top, int right, int bottom) {
         viewport.setViewingPosition(new Rect(left, top, right, bottom));

@@ -62,6 +62,9 @@ public class KLineActivity extends AppCompatActivity {
         chart.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
         chart.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
         chart.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
+        chart.setViewSeparatorColor(ContextCompat.getColor(this, R.color.chart_view_separator));
+        chart.setTextYearSize((int) getDimension(R.dimen.chart_text_year_size));
+        chart.setTextYearColor(ContextCompat.getColor(this, R.color.chart_text_year));
 
         final DrawingKlineChart klineDrawing = new DrawingKlineChart(chart);
         klineDrawing.setDecreasingColor(ContextCompat.getColor(this, R.color.chart_red));
@@ -71,11 +74,13 @@ public class KLineActivity extends AppCompatActivity {
         klineDrawing.setSelectedKlineColor(ContextCompat.getColor(this, R.color.chart_yellow));
         klineDrawing.setSelectedKlineLineWidth(getDimension(R.dimen.chart_selector_line_width));
         klineDrawing.setAutoScale(true);
+        klineDrawing.setWeight(2);
 
         final DrawingRSIChart drawingRSI = new DrawingRSIChart(chart);
         drawingRSI.setLineColor(ContextCompat.getColor(this, R.color.chart_rsi1));
         drawingRSI.setLineWidth(getDimension(R.dimen.chart_kline_inner_width));
         drawingRSI.setAutoScale(true);
+        drawingRSI.setWeight(1);
 //        drawingRSI.setAxisMin(0);
 //        drawingRSI.setAxisMax(100);
 
@@ -86,6 +91,7 @@ public class KLineActivity extends AppCompatActivity {
         drawingRSI2.setAutoScale(false);
         drawingRSI2.setAxisMin(0);
         drawingRSI2.setAxisMax(100);
+        drawingRSI2.setWeight(1);
 
         chart.addDrawingElement(klineDrawing);
         chart.addDrawingElement(drawingRSI);

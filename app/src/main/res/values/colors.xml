@@ -13,6 +13,10 @@
     <color name="chart_rsi3">#E7A520</color>
     <color name="chart_white">#fff</color>
 
+    <color name="chart_view_separator">#A5B1FF</color>
+
+    <color name="chart_text_year">#B1B2B6</color>
+
     <color name="chart_background">#202326</color>
     <color name="chart_grid_line">#353941</color>
     <color name="chart_text">#B1B2B6</color>

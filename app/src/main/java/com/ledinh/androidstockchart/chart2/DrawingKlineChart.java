@@ -32,29 +32,13 @@ public class DrawingKlineChart extends DrawingElement<KlinesSet> {
 
     @Override
     public void draw(Canvas canvas, float translateX) {
+        drawRows(canvas);
         canvas.save();
         canvas.translate(translateX - (1 * spaceBetweenValue), 0);
         drawKlines(canvas, viewport.getViewportWidth());
         canvas.restore();
-
         drawValues(canvas);
         drawTimeline(canvas);
-    }
-
-    @Override
-    public void drawValues(Canvas canvas) {
-        Paint.FontMetrics fm = chart.getPaintTextAxis().getFontMetrics();
-        float textHeight = fm.descent - fm.ascent;
-        float baseLine = (textHeight - fm.bottom - fm.top) / 2;
-
-        float rowSpace = viewport.getViewportHeight() / gridRows;
-        float range = (float) ((yAxis.getAxisMax() - yAxis.getAxisMin()) / gridRows);
-
-        for (int i = 0; i <= gridRows; i++) {
-            NumberFormat formatter = new DecimalFormat("#0.00");
-            String value = formatter.format(yAxis.getAxisMax() - (i * range));
-            canvas.drawText(value, 0, viewport.getViewingPosition().top + (i * rowSpace) + baseLine, chart.getPaintTextAxis());
-        }
     }
 
     @Override
