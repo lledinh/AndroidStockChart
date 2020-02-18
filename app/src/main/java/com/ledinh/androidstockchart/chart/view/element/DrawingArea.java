@@ -8,5 +8,4 @@ public class DrawingArea {
     private YAxis leftAxis;
     private YAxis rightAxis;
 
-
 }

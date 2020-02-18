@@ -48,27 +48,6 @@ public abstract class DrawingElement<E extends ChartSet> {
         yAxis.draw(canvas, viewport);
     }
 
-//    public void drawValues(Canvas canvas) {
-//        Paint.FontMetrics fm = chart.getPaintTextAxis().getFontMetrics();
-//        float textHeight = fm.descent - fm.ascent;
-//        float baseLine = (textHeight - fm.bottom - fm.top) / 2;
-//
-//        float rowSpace = viewport.getViewportHeight() / gridRows;
-//        float range = (float) ((yAxis.getAxisMax() - yAxis.getAxisMin()) / gridRows);
-//
-//        for (int i = 0; i <= gridRows; i++) {
-//            NumberFormat formatter = new DecimalFormat("#0");
-//            String value = formatter.format(yAxis.getAxisMax() - (i * range));
-//
-//            if (i < gridRows) {
-//                canvas.drawText(value, 0, viewport.getViewingPosition().top + (i * rowSpace) + baseLine, chart.getPaintTextAxis());
-//            }
-//            else {
-//                canvas.drawText(value, 0, viewport.getViewingPosition().top + (i * rowSpace), chart.getPaintTextAxis());
-//            }
-//        }
-//    }
-
     public DrawingElement(ChartView chartView) {
         this.yAxis = new YAxis();
         this.chartView = chartView;

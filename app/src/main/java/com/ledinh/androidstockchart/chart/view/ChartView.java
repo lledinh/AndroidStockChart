@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 
 import com.ledinh.androidstockchart.R;
+import com.ledinh.androidstockchart.chart.view.element.DrawingArea;
 import com.ledinh.androidstockchart.chart.view.element.DrawingElement;
 import com.ledinh.androidstockchart.chart.util.TimeUnit;
 import com.ledinh.androidstockchart.chart.util.Viewport;
@@ -34,9 +35,14 @@ public class ChartView extends View implements
     private GestureDetectorCompat mDetector;
     private OverScroller mScroller;
 
-    private Viewport viewport;
+    private Viewport viewportChartView;
+    private Rect titleArea;
     private Rect chartArea;
     private Rect timelineArea;
+
+    private DrawingArea drawingAreaTitle;
+    private DrawingArea drawingAreaChart;
+    private DrawingArea drawingAreaTimeline;
 
     private int scrollX = 0;
     private boolean touch = false;
@@ -49,6 +55,7 @@ public class ChartView extends View implements
     private Paint paintViewSeparator;
     private Paint paintTextAxis;
     private Paint paintTextYear;
+    private Paint paintTextTitle;
 
     private TimeUnit timeUnit;
     private long lastDate;
@@ -88,18 +95,21 @@ public class ChartView extends View implements
     }
 
     private void init() {
-        viewport = new Viewport();
+        viewportChartView = new Viewport();
         drawingElementList = new ArrayList<>();
 
         paintGridLine = new Paint();
         paintTextAxis = new Paint();
         paintTextAxis.setAntiAlias(true);
+        paintTextTitle = new Paint();
+        paintTextTitle.setAntiAlias(true);
         paintTextYear = new Paint();
         paintTextYear.setAntiAlias(true);
         paintTextYear.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
         paintViewSeparator = new Paint();
 
+        titleArea = new Rect();
         chartArea = new Rect();
         timelineArea = new Rect();
 
@@ -120,7 +130,7 @@ public class ChartView extends View implements
 
         if (drawingElementList != null) {
             int drawingElementHeight = oneUnit * drawingElement.getWeight();
-            int drawingElementWidth = viewport.getViewWidth();
+            int drawingElementWidth = viewportChartView.getViewWidth();
 
             Viewport drawingElementViewport = new Viewport(drawingElementWidth, drawingElementHeight);
             drawingElement.setViewport(drawingElementViewport);
@@ -132,30 +142,10 @@ public class ChartView extends View implements
             for (int i = 0; i < drawingElementList.size(); i++) {
                 DrawingElement drawingElement1 = drawingElementList.get(i);
                 drawingElementHeight = oneUnit * drawingElement1.getWeight();
-                drawingElement1.setViewportPosition(0, drawingElementHeight, viewport.getViewWidth(), height + drawingElementHeight);
+                drawingElement1.setViewportPosition(0, drawingElementHeight, viewportChartView.getViewWidth(), height + drawingElementHeight);
                 height += drawingElementHeight;
             }
         }
-    }
-
-    public void setGridLineColor(int color) {
-        paintGridLine.setColor(color);
-    }
-
-    public void setViewSeparatorColor(int color) {
-        paintViewSeparator.setColor(color);
-    }
-
-    public void setTextAxisColor(int color) {
-        paintTextAxis.setColor(color);
-    }
-
-    public void setTextAxisSize(float size) {
-        paintTextAxis.setTextSize(size);
-    }
-
-    public float getScreenDataCount() {
-        return screenDataCount;
     }
 
     private void drawGrid(Canvas canvas) {
@@ -168,8 +158,8 @@ public class ChartView extends View implements
 
     private void setViewport(int w,int h)
     {
-        viewport.setViewWidth(w);
-        viewport.setViewHeight(h);
+        viewportChartView.setViewWidth(w);
+        viewportChartView.setViewHeight(h);
     }
 
     private int getChartAreaHeight() {
@@ -185,8 +175,15 @@ public class ChartView extends View implements
         super.onSizeChanged(w, h, oldw, oldh);
         setViewport(w,h);
 
+        int titleAreaSize = h / 12;
+
+        titleArea.top = 0;
+        titleArea.left = 0;
+        titleArea.bottom = titleAreaSize;
+        titleArea.right = w;
+
         int timelineAreaSize = h / 12;
-        chartArea.top = 0;
+        chartArea.top = titleAreaSize;
         chartArea.left = 0;
         chartArea.bottom = h - timelineAreaSize;
         chartArea.right = w;
@@ -196,7 +193,7 @@ public class ChartView extends View implements
         timelineArea.bottom = h;
         timelineArea.right = w;
 
-        spaceBetweenValue = (float) viewport.getViewWidth() / screenDataCount;
+        spaceBetweenValue = (float) viewportChartView.getViewWidth() / screenDataCount;
 
         int weightSum = 0;
         for (int i = 0; i < drawingElementList.size(); i++) {
@@ -212,31 +209,11 @@ public class ChartView extends View implements
             int drawingElementHeight = oneUnit * drawingElement1.getWeight();
             drawingElement1.getViewport().setViewWidth(getChartAreaHeight());
             drawingElement1.getViewport().setViewHeight(getChartAreaHeight());
-            drawingElement1.setViewportPosition(0, height, viewport.getViewWidth(), height + drawingElementHeight);
+            drawingElement1.setViewportPosition(0, height, viewportChartView.getViewWidth(), height + drawingElementHeight);
             height += drawingElementHeight;
 
             drawingElement1.setSpaceBetweenValue(spaceBetweenValue);
         }
-    }
-
-    public void setScreenDataCount(int count) {
-        screenDataCount = count;
-    }
-
-    public void setSpaceBetweenValue(float spaceBetweenValue) {
-        this.spaceBetweenValue = spaceBetweenValue;
-    }
-
-    public void setMaxIndex(int maxIndex) {
-        this.maxIndex = maxIndex;
-    }
-
-    public void setLastDate(long lastDate) {
-        this.lastDate = lastDate;
-    }
-
-    public void setTimeUnit(TimeUnit timeUnit) {
-        this.timeUnit = timeUnit;
     }
 
     public int getIndexFromX(int x) {
@@ -300,7 +277,7 @@ public class ChartView extends View implements
 
         long timestampMid = 0;
         for (int i = 0; i <= gridColumns; i++) {
-            int indexFromX = getIndexFromX((int) (viewport.getViewWidth() - translateX - dist));
+            int indexFromX = getIndexFromX((int) (viewportChartView.getViewWidth() - translateX - dist));
             if (indexFromX < 0) indexFromX = 0;
 
             long dateTimestamp = calculateDate(indexFromX);
@@ -327,8 +304,13 @@ public class ChartView extends View implements
 
         String year = getYear(timestampMid);
         float textWidth = paintTextYear.measureText(year);
-        canvas.drawText(year, (viewport.getViewWidth() / 2f) - (textWidth / 2), timelineArea.bottom - ((timelineArea.bottom - timelineArea.top) / 3), paintTextYear);
+        canvas.drawText(year, (viewportChartView.getViewWidth() / 2f) - (textWidth / 2), timelineArea.bottom - ((timelineArea.bottom - timelineArea.top) / 3), paintTextYear);
 
+    }
+
+    private void drawTitle(Canvas canvas) {
+        float textWidth = paintTextTitle.measureText("BTC / USD");
+        canvas.drawText("BTC / USD", (viewportChartView.getViewWidth() / 2f) - (textWidth / 2), (titleArea.bottom - titleArea.top) / 2, paintTextAxis);
     }
 
     @Override
@@ -342,6 +324,7 @@ public class ChartView extends View implements
             drawingElementList.get(i).draw(canvas, null, translateX);
         }
 
+        drawTitle(canvas);
         drawTimeline(canvas);
     }
 
@@ -400,7 +383,7 @@ public class ChartView extends View implements
 
         for (DrawingElement drawingElement: drawingElementList) {
             if (drawingElement.isAutoScale()) {
-                int lastValueIndex = getIndexFromX((int) (viewport.getViewWidth() - translateX));
+                int lastValueIndex = getIndexFromX((int) (viewportChartView.getViewWidth() - translateX));
                 int firstValueIndex = (int) (lastValueIndex - getScreenDataCount());
                 drawingElement.updateAxisRangeFromIndex(firstValueIndex, lastValueIndex);
                 drawingElement.getyAxis().extendRange(20);
@@ -430,7 +413,7 @@ public class ChartView extends View implements
         int maxIndex = Integer.MIN_VALUE;
         for (DrawingElement drawingElement: drawingElementList) {
             if (drawingElement.getMaxIndex() > maxIndex) {
-                maxIndex = (int) (drawingElement.getChartData().getDataSize() * spaceBetweenValue - viewport.getViewWidth());
+                maxIndex = (int) (drawingElement.getChartData().getDataSize() * spaceBetweenValue - viewportChartView.getViewWidth());
             }
         }
 
@@ -494,6 +477,54 @@ public class ChartView extends View implements
 
     public void setTextYearSize(float size) {
         paintTextYear.setTextSize(size);
+    }
+
+    public void setTextTitleColor(int color) {
+        paintTextTitle.setColor(color);
+    }
+
+    public void setTextTitleSize(float size) {
+        paintTextTitle.setTextSize(size);
+    }
+
+    public void setScreenDataCount(int count) {
+        screenDataCount = count;
+    }
+
+    public void setSpaceBetweenValue(float spaceBetweenValue) {
+        this.spaceBetweenValue = spaceBetweenValue;
+    }
+
+    public void setMaxIndex(int maxIndex) {
+        this.maxIndex = maxIndex;
+    }
+
+    public void setLastDate(long lastDate) {
+        this.lastDate = lastDate;
+    }
+
+    public void setTimeUnit(TimeUnit timeUnit) {
+        this.timeUnit = timeUnit;
+    }
+
+    public void setGridLineColor(int color) {
+        paintGridLine.setColor(color);
+    }
+
+    public void setViewSeparatorColor(int color) {
+        paintViewSeparator.setColor(color);
+    }
+
+    public void setTextAxisColor(int color) {
+        paintTextAxis.setColor(color);
+    }
+
+    public void setTextAxisSize(float size) {
+        paintTextAxis.setTextSize(size);
+    }
+
+    public float getScreenDataCount() {
+        return screenDataCount;
     }
 
 
