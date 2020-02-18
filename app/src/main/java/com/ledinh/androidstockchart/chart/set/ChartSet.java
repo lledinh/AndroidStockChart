@@ -1,4 +1,6 @@
-package com.ledinh.androidstockchart.chart2;
+package com.ledinh.androidstockchart.chart.set;
+
+import com.ledinh.androidstockchart.chart.util.TimeUnit;
 
 import java.util.List;
 

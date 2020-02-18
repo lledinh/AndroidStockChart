@@ -1,4 +1,4 @@
-package com.ledinh.androidstockchart.chart2;
+package com.ledinh.androidstockchart.chart.util;
 
 public enum TimeUnit {
     ONE_MINUTE("1m"),

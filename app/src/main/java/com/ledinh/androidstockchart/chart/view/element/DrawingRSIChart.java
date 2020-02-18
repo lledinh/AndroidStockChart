@@ -1,43 +1,40 @@
-package com.ledinh.androidstockchart.chart2;
+package com.ledinh.androidstockchart.chart.view.element;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.util.Log;
 
-import com.ledinh.androidstockchart.chart.Kline;
-import com.ledinh.androidstockchart.chart.RSI;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
+import com.ledinh.androidstockchart.chart.model.RSI;
+import com.ledinh.androidstockchart.chart.set.RSISet;
+import com.ledinh.androidstockchart.chart.view.ChartView;
 
 public class DrawingRSIChart extends DrawingElement<RSISet> {
     private Paint paintLine;
     private float lastDate;
 
 
-    public DrawingRSIChart(Chart chart) {
-        super(chart);
+    public DrawingRSIChart(ChartView chartView) {
+        super(chartView);
         paintLine = new Paint();
         paintLine.setAntiAlias(true);
     }
 
     @Override
-    public void draw(Canvas canvas, float translateX) {
+    public void draw(Canvas canvas, DrawingArea drawingArea, float translateX) {
         drawRows(canvas);
         canvas.save();
         canvas.translate(translateX - (1 * spaceBetweenValue), 0);
         drawLines(canvas, viewport.getViewportWidth());
         canvas.restore();
-        drawValues(canvas);
+        drawAxis(canvas);
         drawTimeline(canvas);
     }
 
     public void drawLines(Canvas canvas, float highestX) {
         float x = highestX;
 
-        for (int i = chartData.values.size() - 1; i >= 1 ; i--) {
-            RSI rsi1 = chartData.values.get(i);
-            RSI rsi2 = chartData.values.get(i - 1);
+        for (int i = chartData.getValues().size() - 1; i >= 1 ; i--) {
+            RSI rsi1 = chartData.getValues().get(i);
+            RSI rsi2 = chartData.getValues().get(i - 1);
 
             double axisPos = viewport.getViewingPosition().top + yAxis.getInvertedAxisPos(rsi1.rsi) * viewport.getViewportHeight();
             double axisPos1 = viewport.getViewingPosition().top + yAxis.getInvertedAxisPos(rsi2.rsi) * viewport.getViewportHeight();

@@ -1,4 +1,4 @@
-package com.ledinh.androidstockchart.chart;
+package com.ledinh.androidstockchart.chart.util;
 
 import android.graphics.Rect;
 

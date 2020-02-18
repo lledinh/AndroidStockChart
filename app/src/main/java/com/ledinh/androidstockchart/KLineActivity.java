@@ -15,14 +15,14 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
-import com.ledinh.androidstockchart.chart.KLineChartView;
-import com.ledinh.androidstockchart.chart.Kline;
-import com.ledinh.androidstockchart.chart2.DrawingRSIChart;
-import com.ledinh.androidstockchart.chart2.KlinesSet;
-import com.ledinh.androidstockchart.chart2.RSISet;
-import com.ledinh.androidstockchart.chart2.DrawingKlineChart;
-import com.ledinh.androidstockchart.chart2.TimeUnit;
-import com.ledinh.androidstockchart.chart2.Chart;
+import com.ledinh.androidstockchart.chart.model.Kline;
+import com.ledinh.androidstockchart.chart.view.element.DrawingArea;
+import com.ledinh.androidstockchart.chart.view.element.DrawingRSIChart;
+import com.ledinh.androidstockchart.chart.set.KlinesSet;
+import com.ledinh.androidstockchart.chart.set.RSISet;
+import com.ledinh.androidstockchart.chart.view.element.DrawingKlineChart;
+import com.ledinh.androidstockchart.chart.util.TimeUnit;
+import com.ledinh.androidstockchart.chart.view.ChartView;
 import com.ledinh.androidstockchart.math.Calculator;
 
 import java.io.BufferedReader;
@@ -35,7 +35,7 @@ public class KLineActivity extends AppCompatActivity {
 
 //    KLineChartView kLineChartView;
 //    RSIChartView rsiChartView;
-    Chart chart;
+    ChartView chartView;
 
     private float getDimension(@DimenRes int resId) {
         return getResources().getDimension(resId);
@@ -49,24 +49,24 @@ public class KLineActivity extends AppCompatActivity {
 //        kLineChartView = findViewById(R.id.kchart_view);
 //        rsiChartView = findViewById(R.id.rsichart_view);
 
-        chart = findViewById(R.id.chart2);
+        chartView = findViewById(R.id.chart2);
 
         final List<Kline> klines = readFileSample();
 
-        chart.setTimeUnit(TimeUnit.ONE_DAY);
-        chart.setMaxIndex(klines.size() - 1);
-        chart.setLastDate(klines.get(klines.size() - 1).openTime);
-        chart.setScreenDataCount(60);
+        chartView.setTimeUnit(TimeUnit.ONE_DAY);
+        chartView.setMaxIndex(klines.size() - 1);
+        chartView.setLastDate(klines.get(klines.size() - 1).openTime);
+        chartView.setScreenDataCount(60);
 
-        chart.setBackgroundColor(ContextCompat.getColor(this, R.color.chart_background));
-        chart.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
-        chart.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
-        chart.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
-        chart.setViewSeparatorColor(ContextCompat.getColor(this, R.color.chart_view_separator));
-        chart.setTextYearSize((int) getDimension(R.dimen.chart_text_year_size));
-        chart.setTextYearColor(ContextCompat.getColor(this, R.color.chart_text_year));
+        chartView.setBackgroundColor(ContextCompat.getColor(this, R.color.chart_background));
+        chartView.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
+        chartView.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
+        chartView.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
+        chartView.setViewSeparatorColor(ContextCompat.getColor(this, R.color.chart_view_separator));
+        chartView.setTextYearSize((int) getDimension(R.dimen.chart_text_year_size));
+        chartView.setTextYearColor(ContextCompat.getColor(this, R.color.chart_text_year));
 
-        final DrawingKlineChart klineDrawing = new DrawingKlineChart(chart);
+        final DrawingKlineChart klineDrawing = new DrawingKlineChart(chartView);
         klineDrawing.setDecreasingColor(ContextCompat.getColor(this, R.color.chart_red));
         klineDrawing.setIncreasingColor(ContextCompat.getColor(this, R.color.chart_green));
         klineDrawing.setKlineWidth(getDimension(R.dimen.chart_kline_width));
@@ -75,27 +75,51 @@ public class KLineActivity extends AppCompatActivity {
         klineDrawing.setSelectedKlineLineWidth(getDimension(R.dimen.chart_selector_line_width));
         klineDrawing.setAutoScale(true);
         klineDrawing.setWeight(2);
+        klineDrawing.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
+        klineDrawing.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
+        klineDrawing.setTextAxisBackgroundColor(ContextCompat.getColor(this, R.color.chart_background2));
+        klineDrawing.setTextAxisLeftPadding((int) getDimension(R.dimen.chart_axis_padding));
+        klineDrawing.setUnit("Dollar");
+        klineDrawing.setTextUnitColor(ContextCompat.getColor(this, R.color.chart_text));
+        klineDrawing.setTextUnitSize((int) getDimension(R.dimen.chart_text_unit_size));
 
-        final DrawingRSIChart drawingRSI = new DrawingRSIChart(chart);
+        DrawingArea drawingAreaKline;
+        DrawingArea drawingAreaRSI;
+
+        final DrawingRSIChart drawingRSI = new DrawingRSIChart(chartView);
         drawingRSI.setLineColor(ContextCompat.getColor(this, R.color.chart_rsi1));
         drawingRSI.setLineWidth(getDimension(R.dimen.chart_kline_inner_width));
         drawingRSI.setAutoScale(true);
         drawingRSI.setWeight(1);
+        drawingRSI.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
+        drawingRSI.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
+        drawingRSI.setTextAxisBackgroundColor(ContextCompat.getColor(this, R.color.chart_background2));
 //        drawingRSI.setAxisMin(0);
 //        drawingRSI.setAxisMax(100);
+        drawingRSI.setTextAxisLeftPadding((int) getDimension(R.dimen.chart_axis_padding));
+        drawingRSI.setUnit("%");
+        drawingRSI.setTextUnitColor(ContextCompat.getColor(this, R.color.chart_text));
+        drawingRSI.setTextUnitSize((int) getDimension(R.dimen.chart_text_unit_size));
 
 
-        final DrawingRSIChart drawingRSI2 = new DrawingRSIChart(chart);
+        final DrawingRSIChart drawingRSI2 = new DrawingRSIChart(chartView);
         drawingRSI2.setLineColor(ContextCompat.getColor(this, R.color.chart_rsi2));
         drawingRSI2.setLineWidth(getDimension(R.dimen.chart_kline_inner_width));
         drawingRSI2.setAutoScale(false);
         drawingRSI2.setAxisMin(0);
         drawingRSI2.setAxisMax(100);
         drawingRSI2.setWeight(1);
+        drawingRSI2.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
+        drawingRSI2.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
+        drawingRSI2.setTextAxisBackgroundColor(ContextCompat.getColor(this, R.color.chart_background2));
+        drawingRSI2.setTextAxisLeftPadding((int) getDimension(R.dimen.chart_axis_padding));
+        drawingRSI2.setUnit("%");
+        drawingRSI2.setTextUnitColor(ContextCompat.getColor(this, R.color.chart_text));
+        drawingRSI2.setTextUnitSize((int) getDimension(R.dimen.chart_text_unit_size));
 
-        chart.addDrawingElement(klineDrawing);
-        chart.addDrawingElement(drawingRSI);
-        chart.addDrawingElement(drawingRSI2);
+        chartView.addDrawingElement(klineDrawing);
+        chartView.addDrawingElement(drawingRSI);
+        chartView.addDrawingElement(drawingRSI2);
 
         runOnUiThread(new Runnable() {
             @Override
@@ -105,13 +129,13 @@ public class KLineActivity extends AppCompatActivity {
                 RSISet rsiSet2 = Calculator.rsi(klinesSet, 14);
 
                 klineDrawing.setChartData(klinesSet);
-                chart.invalidate();
+                chartView.invalidate();
 
                 drawingRSI.setChartData(rsiSet1);
-                chart.invalidate();
+                chartView.invalidate();
 
                 drawingRSI2.setChartData(rsiSet2);
-                chart.invalidate();
+                chartView.invalidate();
 
 
 //                KlinesSet klinesSet = new KlinesSet(klines, TimeUnit.ONE_DAY);

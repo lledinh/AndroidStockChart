@@ -1,7 +1,7 @@
-package com.ledinh.androidstockchart.chart2;
+package com.ledinh.androidstockchart.chart.set;
 
-import com.ledinh.androidstockchart.chart.Kline;
-import com.ledinh.androidstockchart.chart2.TimeUnit;
+import com.ledinh.androidstockchart.chart.util.TimeUnit;
+import com.ledinh.androidstockchart.chart.model.Kline;
 
 import java.util.ArrayList;
 import java.util.List;

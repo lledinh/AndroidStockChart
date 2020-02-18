@@ -1,12 +1,12 @@
-package com.ledinh.androidstockchart.chart2;
+package com.ledinh.androidstockchart.chart.view.element;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
-import com.ledinh.androidstockchart.chart.Kline;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
+import com.ledinh.androidstockchart.chart.YAxis;
+import com.ledinh.androidstockchart.chart.model.Kline;
+import com.ledinh.androidstockchart.chart.set.KlinesSet;
+import com.ledinh.androidstockchart.chart.view.ChartView;
 
 public class DrawingKlineChart extends DrawingElement<KlinesSet> {
     private Paint paintIncreasing;
@@ -18,8 +18,8 @@ public class DrawingKlineChart extends DrawingElement<KlinesSet> {
 
     private float lastDate;
 
-    public DrawingKlineChart(Chart chart) {
-        super(chart);
+    public DrawingKlineChart(ChartView chartView) {
+        super(chartView);
 
         paintIncreasing = new Paint();
         paintDecreasing = new Paint();
@@ -31,13 +31,13 @@ public class DrawingKlineChart extends DrawingElement<KlinesSet> {
     }
 
     @Override
-    public void draw(Canvas canvas, float translateX) {
+    public void draw(Canvas canvas, DrawingArea drawingArea, float translateX) {
         drawRows(canvas);
         canvas.save();
         canvas.translate(translateX - (1 * spaceBetweenValue), 0);
         drawKlines(canvas, viewport.getViewportWidth());
         canvas.restore();
-        drawValues(canvas);
+        drawAxis(canvas);
         drawTimeline(canvas);
     }
 
@@ -112,7 +112,7 @@ public class DrawingKlineChart extends DrawingElement<KlinesSet> {
         this.chartData = klinesSet;
         int lastIndex = chartData.getDataSize() - 1;
         if (autoScale) {
-            updateAxisRangeFromIndex((int) (lastIndex - chart.getScreenDataCount()), lastIndex);
+            updateAxisRangeFromIndex((int) (lastIndex - chartView.getScreenDataCount()), lastIndex);
         }
         else {
             updateAxisRangeFromIndex(0, chartData.getDataSize() - 1);

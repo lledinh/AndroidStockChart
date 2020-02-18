@@ -1,4 +1,4 @@
-package com.ledinh.androidstockchart.chart2;
+package com.ledinh.androidstockchart.chart.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -17,7 +17,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 
 import com.ledinh.androidstockchart.R;
-import com.ledinh.androidstockchart.chart.Viewport;
+import com.ledinh.androidstockchart.chart.view.element.DrawingElement;
+import com.ledinh.androidstockchart.chart.util.TimeUnit;
+import com.ledinh.androidstockchart.chart.util.Viewport;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,7 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class Chart extends View implements
+public class ChartView extends View implements
         GestureDetector.OnGestureListener {
 
     private GestureDetectorCompat mDetector;
@@ -58,24 +60,24 @@ public class Chart extends View implements
     private List<DrawingElement> drawingElementList;
     private Map<Integer, DrawingElement> positionDrawingElement;
 
-    public Chart(Context context) {
+    public ChartView(Context context) {
         super(context);
         init();
     }
 
-    public Chart(Context context, @Nullable AttributeSet attrs) {
+    public ChartView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
         initAttrs(attrs);
     }
 
-    public Chart(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public ChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
         initAttrs(attrs);
     }
 
-    public Chart(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
         initAttrs(attrs);
@@ -202,49 +204,19 @@ public class Chart extends View implements
             weightSum += drawingElement1.getWeight();
         }
 
-        int oneUnit = (int) (getChartAreaHeight() / weightSum);
+        int oneUnit = getChartAreaHeight() / weightSum;
 
         int height = 0;
         for (int i = 0; i < drawingElementList.size(); i++) {
             DrawingElement drawingElement1 = drawingElementList.get(i);
             int drawingElementHeight = oneUnit * drawingElement1.getWeight();
-            drawingElement1.getViewport().setViewWidth((int) getChartAreaHeight());
-            drawingElement1.getViewport().setViewHeight((int) getChartAreaHeight());
+            drawingElement1.getViewport().setViewWidth(getChartAreaHeight());
+            drawingElement1.getViewport().setViewHeight(getChartAreaHeight());
             drawingElement1.setViewportPosition(0, height, viewport.getViewWidth(), height + drawingElementHeight);
             height += drawingElementHeight;
 
             drawingElement1.setSpaceBetweenValue(spaceBetweenValue);
         }
-
-//        for (DrawingElement drawingElement : drawingElementList) {
-//            drawingElement.viewport = viewport;
-//            drawingElement.setSpaceBetweenValue(spaceBetweenValue);
-//        }
-
-        int drawingElementHeight;
-//        if (drawingElementList.size() == 0) {
-//            drawingElementHeight = viewport.getViewHeight();
-//        }
-//        else {
-//            drawingElementHeight = viewport.getViewHeight() / drawingElementList.size();
-//        }
-//
-//        int height = 0;
-//
-//        for (int i = 0; i < drawingElementList.size(); i++) {
-//            DrawingElement drawingElement1 = drawingElementList.get(i);
-//            drawingElement1.getViewport().setViewWidth(viewport.getViewWidth());
-//            drawingElement1.getViewport().setViewHeight(viewport.getViewHeight());
-//            drawingElement1.setViewportPosition(0, height, viewport.getViewWidth(), height + drawingElementHeight);
-//            height += drawingElementHeight;
-//
-//            drawingElement1.setSpaceBetweenValue(spaceBetweenValue);
-//        }
-
-//        for (DrawingElement drawingElement : drawingElementList) {
-//            drawingElement.viewport = viewport;
-//            drawingElement.setSpaceBetweenValue(spaceBetweenValue);
-//        }
     }
 
     public void setScreenDataCount(int count) {
@@ -367,7 +339,7 @@ public class Chart extends View implements
         drawGrid(canvas);
 
         for (int i = 0; i < drawingElementList.size(); i++) {
-            drawingElementList.get(i).draw(canvas, translateX);
+            drawingElementList.get(i).draw(canvas, null, translateX);
         }
 
         drawTimeline(canvas);

@@ -1,4 +1,4 @@
-package com.ledinh.androidstockchart.chart;
+package com.ledinh.androidstockchart.chart.model;
 
 public class Kline {
     public long openTime;

@@ -1,9 +1,9 @@
 package com.ledinh.androidstockchart.math;
 
-import com.ledinh.androidstockchart.chart.Kline;
-import com.ledinh.androidstockchart.chart2.KlinesSet;
-import com.ledinh.androidstockchart.chart.RSI;
-import com.ledinh.androidstockchart.chart2.RSISet;
+import com.ledinh.androidstockchart.chart.model.Kline;
+import com.ledinh.androidstockchart.chart.set.KlinesSet;
+import com.ledinh.androidstockchart.chart.model.RSI;
+import com.ledinh.androidstockchart.chart.set.RSISet;
 
 import java.util.ArrayList;
 import java.util.List;

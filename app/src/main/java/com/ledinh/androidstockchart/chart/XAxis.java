@@ -1,4 +1,4 @@
 package com.ledinh.androidstockchart.chart;
 
-public class ChartView {
+public class XAxis {
 }
