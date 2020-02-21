@@ -1,31 +1,30 @@
 package com.ledinh.androidstockchart.chart.view.element;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.ledinh.androidstockchart.chart.model.RSI;
 import com.ledinh.androidstockchart.chart.set.RSISet;
-import com.ledinh.androidstockchart.chart.view.ChartView;
+import com.ledinh.androidstockchart.chart.view.ChartViewFragment;
 
 public class DrawingRSIChart extends DrawingElement<RSISet> {
     private Paint paintLine;
     private float lastDate;
 
 
-    public DrawingRSIChart(ChartView chartView) {
-        super(chartView);
+    public DrawingRSIChart(ChartViewFragment chartViewFragment) {
+        super(chartViewFragment);
         paintLine = new Paint();
         paintLine.setAntiAlias(true);
     }
 
     @Override
-    public void draw(Canvas canvas, DrawingArea drawingArea, float translateX) {
-        drawRows(canvas);
+    public void draw(Canvas canvas, float translateX) {
         canvas.save();
         canvas.translate(translateX - (1 * spaceBetweenValue), 0);
-        drawLines(canvas, viewport.getViewportWidth());
+        drawLines(canvas, chartViewFragment.getDrawingArea().getViewport().getViewportWidth());
         canvas.restore();
-        drawAxis(canvas);
         drawTimeline(canvas);
     }
 
@@ -36,8 +35,8 @@ public class DrawingRSIChart extends DrawingElement<RSISet> {
             RSI rsi1 = chartData.getValues().get(i);
             RSI rsi2 = chartData.getValues().get(i - 1);
 
-            double axisPos = viewport.getViewingPosition().top + yAxis.getInvertedAxisPos(rsi1.rsi) * viewport.getViewportHeight();
-            double axisPos1 = viewport.getViewingPosition().top + yAxis.getInvertedAxisPos(rsi2.rsi) * viewport.getViewportHeight();
+            double axisPos = chartViewFragment.getDrawingArea().getViewport().getViewingPosition().top + chartViewFragment.getDrawingArea().getLeftAxis().getInvertedAxisPos(rsi1.rsi) * chartViewFragment.getDrawingArea().getViewport().getViewportHeight();
+            double axisPos1 = chartViewFragment.getDrawingArea().getViewport().getViewingPosition().top + chartViewFragment.getDrawingArea().getLeftAxis().getInvertedAxisPos(rsi2.rsi) * chartViewFragment.getDrawingArea().getViewport().getViewportHeight();
 
             canvas.drawLine(x, (float) axisPos, x - spaceBetweenValue, (float) axisPos1, paintLine);
             x -= spaceBetweenValue;
@@ -47,11 +46,6 @@ public class DrawingRSIChart extends DrawingElement<RSISet> {
     @Override
     public void drawTimeline(Canvas canvas) {
 
-    }
-
-    @Override
-    public int getMaxIndex() {
-        return chartData.getDataSize() - 1;
     }
 
     @Override

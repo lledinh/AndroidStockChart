@@ -1,63 +1,59 @@
 package com.ledinh.androidstockchart.chart.view.element;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Pair;
 
+import androidx.core.content.ContextCompat;
+
+import com.ledinh.androidstockchart.R;
 import com.ledinh.androidstockchart.chart.util.Viewport;
 import com.ledinh.androidstockchart.chart.YAxis;
 import com.ledinh.androidstockchart.chart.set.ChartSet;
-import com.ledinh.androidstockchart.chart.view.ChartView;
+import com.ledinh.androidstockchart.chart.view.ChartViewFragment;
+
+import java.util.List;
 
 public abstract class DrawingElement<E extends ChartSet> {
-    protected ChartView chartView;
 
     protected int weight;
 
     protected boolean autoScale;
     protected int gridRows;
 
-    protected Viewport viewport;
     protected float spaceBetweenValue;
     protected YAxis yAxis;
 
     protected E chartData;
 
-    public abstract void draw(Canvas canvas, DrawingArea drawingArea, float translateX);
+    protected DrawingArea drawingArea;
+    protected Paint paint;
+    protected ChartViewFragment chartViewFragment;
+
+    public abstract void draw(Canvas canvas, float translateX);
     public abstract void drawTimeline(Canvas canvas);
-    public abstract int getMaxIndex();
     public abstract void updateAxisRangeFromIndex(int firstValueIndex, int lastValueIndex);
 
-    public void drawRows(Canvas canvas) {
-        float rowSpace = viewport.getViewportHeight() / gridRows;
-
-        for (int i = 0; i <= gridRows; i++) {
-            Paint p;
-            if (i == 0 || i == gridRows) {
-                p = chartView.getPaintViewSeparator();
-            }
-            else {
-                p = chartView.getPaintGridLine();
-            }
-
-            canvas.drawLine(viewport.getViewingPosition().left, viewport.getViewingPosition().top + (i * rowSpace), viewport.getViewingPosition().right, viewport.getViewingPosition().top + (i * rowSpace), p);
-        }
-    }
-
-    public void drawAxis(Canvas canvas) {
-        yAxis.draw(canvas, viewport);
-    }
-
-    public DrawingElement(ChartView chartView) {
+    public DrawingElement(ChartViewFragment chartViewFragment) {
         this.yAxis = new YAxis();
-        this.chartView = chartView;
         autoScale = true;
         gridRows = 4;
         weight = 1;
+        this.chartViewFragment = chartViewFragment;
+    }
+
+    public int getMaxIndex() {
+        return chartData.getDataSize() - 1;
+    }
+
+    public Pair<Integer, Integer> getRange(int firstValueIndex, int lastValueIndex) {
+        return (Pair<Integer, Integer>) chartData.getRange(firstValueIndex, lastValueIndex);
     }
 
     public void setViewportPosition(int left, int top, int right, int bottom) {
-        viewport.setViewingPosition(new Rect(left, top, right, bottom));
+        chartViewFragment.getDrawingArea().getViewport().setViewingPosition(new Rect(left, top, right, bottom));
     }
 
     public void setAxisMin(double min) {
@@ -68,12 +64,9 @@ public abstract class DrawingElement<E extends ChartSet> {
         yAxis.setAxisMax(max);
     }
 
-    public ChartView getChartView() {
-        return chartView;
-    }
 
     public Viewport getViewport() {
-        return viewport;
+        return chartViewFragment.getDrawingArea().getViewport();
     }
 
     public float getSpaceBetweenValue() {
@@ -104,17 +97,14 @@ public abstract class DrawingElement<E extends ChartSet> {
         this.autoScale = autoScale;
     }
 
-    public void setChartView(ChartView chartView) {
-        this.chartView = chartView;
-    }
 
     public void setGridRows(int gridRows) {
         this.gridRows = gridRows;
     }
 
-    public void setViewport(Viewport viewport) {
-        this.viewport = viewport;
-    }
+//    public void setViewport(Viewport viewport) {
+//        this.drawingArea.setViewport(viewport);
+//    }
 
     public void setyAxis(YAxis yAxis) {
         this.yAxis = yAxis;
@@ -162,6 +152,11 @@ public abstract class DrawingElement<E extends ChartSet> {
     }
 
 
+    public DrawingArea getDrawingArea() {
+        return drawingArea;
+    }
 
-
+    public void setDrawingArea(DrawingArea drawingArea) {
+        this.drawingArea = drawingArea;
+    }
 }

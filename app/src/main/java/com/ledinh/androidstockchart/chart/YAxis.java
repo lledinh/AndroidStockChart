@@ -9,6 +9,10 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class YAxis {
+    public enum Position {
+        LEFT, RIGHT
+    }
+
     private double axisMin = Integer.MAX_VALUE;
     private double axisMax = Integer.MIN_VALUE;
 
@@ -19,6 +23,8 @@ public class YAxis {
 
     private int leftPadding;
     private String unit;
+
+    private Position position;
 
     public YAxis() {
         this.paintTextAxis = new Paint();
@@ -112,6 +118,11 @@ public class YAxis {
         axisMin -= (range / ratio);
     }
 
+    public void setRange(double min, double max) {
+        axisMin = min;
+        axisMax = max;
+    }
+
     /**
      * Return a value between 0 and 1
      * 0.5 means that the position is located at half the axis
@@ -168,5 +179,17 @@ public class YAxis {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
     }
 }
