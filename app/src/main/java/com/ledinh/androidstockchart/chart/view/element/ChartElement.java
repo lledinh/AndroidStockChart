@@ -1,22 +1,18 @@
 package com.ledinh.androidstockchart.chart.view.element;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Pair;
 
-import androidx.core.content.ContextCompat;
-
-import com.ledinh.androidstockchart.R;
 import com.ledinh.androidstockchart.chart.util.Viewport;
 import com.ledinh.androidstockchart.chart.YAxis;
 import com.ledinh.androidstockchart.chart.set.ChartSet;
-import com.ledinh.androidstockchart.chart.view.ChartViewFragment;
+import com.ledinh.androidstockchart.chart.view.UIElement;
+import com.ledinh.androidstockchart.chart.view.container.Chart;
+import com.ledinh.androidstockchart.chart.view.container.Frame;
 
-import java.util.List;
-
-public abstract class DrawingElement<E extends ChartSet> {
+public abstract class ChartElement<E extends ChartSet> extends UIElement {
 
     protected int weight;
 
@@ -28,20 +24,16 @@ public abstract class DrawingElement<E extends ChartSet> {
 
     protected E chartData;
 
-    protected DrawingArea drawingArea;
+    protected Frame frame;
     protected Paint paint;
-    protected ChartViewFragment chartViewFragment;
+    protected Chart chart;
 
-    public abstract void draw(Canvas canvas, float translateX);
-    public abstract void drawTimeline(Canvas canvas);
-    public abstract void updateAxisRangeFromIndex(int firstValueIndex, int lastValueIndex);
-
-    public DrawingElement(ChartViewFragment chartViewFragment) {
+    public ChartElement(Chart chart) {
         this.yAxis = new YAxis();
         autoScale = true;
         gridRows = 4;
         weight = 1;
-        this.chartViewFragment = chartViewFragment;
+        this.chart = chart;
     }
 
     public int getMaxIndex() {
@@ -53,7 +45,7 @@ public abstract class DrawingElement<E extends ChartSet> {
     }
 
     public void setViewportPosition(int left, int top, int right, int bottom) {
-        chartViewFragment.getDrawingArea().getViewport().setViewingPosition(new Rect(left, top, right, bottom));
+        chart.getFrame().getViewport().setViewingPosition(new Rect(left, top, right, bottom));
     }
 
     public void setAxisMin(double min) {
@@ -66,7 +58,7 @@ public abstract class DrawingElement<E extends ChartSet> {
 
 
     public Viewport getViewport() {
-        return chartViewFragment.getDrawingArea().getViewport();
+        return chart.getFrame().getViewport();
     }
 
     public float getSpaceBetweenValue() {
@@ -103,7 +95,7 @@ public abstract class DrawingElement<E extends ChartSet> {
     }
 
 //    public void setViewport(Viewport viewport) {
-//        this.drawingArea.setViewport(viewport);
+//        this.frame.setViewport(viewport);
 //    }
 
     public void setyAxis(YAxis yAxis) {
@@ -152,11 +144,11 @@ public abstract class DrawingElement<E extends ChartSet> {
     }
 
 
-    public DrawingArea getDrawingArea() {
-        return drawingArea;
+    public Frame getFrame() {
+        return frame;
     }
 
-    public void setDrawingArea(DrawingArea drawingArea) {
-        this.drawingArea = drawingArea;
+    public void setFrame(Frame frame) {
+        this.frame = frame;
     }
 }

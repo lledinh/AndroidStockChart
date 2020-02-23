@@ -1,10 +1,8 @@
 package com.ledinh.androidstockchart;
 
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.view.ViewTreeObserver;
 
 import androidx.annotation.DimenRes;
@@ -22,14 +20,13 @@ import com.google.gson.reflect.TypeToken;
 import com.ledinh.androidstockchart.chart.YAxis;
 import com.ledinh.androidstockchart.chart.model.Kline;
 import com.ledinh.androidstockchart.chart.util.Viewport;
-import com.ledinh.androidstockchart.chart.view.ChartView2;
-import com.ledinh.androidstockchart.chart.view.ChartViewFragment;
-import com.ledinh.androidstockchart.chart.view.element.DrawingArea;
-import com.ledinh.androidstockchart.chart.view.element.DrawingElement;
-import com.ledinh.androidstockchart.chart.view.element.DrawingRSIChart;
+import com.ledinh.androidstockchart.chart.view.StockChartView;
+import com.ledinh.androidstockchart.chart.view.container.Chart;
+import com.ledinh.androidstockchart.chart.view.element.KLineElement;
+import com.ledinh.androidstockchart.chart.view.element.RSIElement;
+import com.ledinh.androidstockchart.chart.view.container.Frame;
 import com.ledinh.androidstockchart.chart.set.KlinesSet;
 import com.ledinh.androidstockchart.chart.set.RSISet;
-import com.ledinh.androidstockchart.chart.view.element.DrawingKlineChart;
 import com.ledinh.androidstockchart.chart.util.TimeUnit;
 import com.ledinh.androidstockchart.math.Calculator;
 
@@ -41,7 +38,7 @@ import java.util.List;
 
 public class KLineActivity2 extends AppCompatActivity {
 
-    ChartView2 chartView;
+    StockChartView stockChartView;
 
     private float getDimension(@DimenRes int resId) {
         return getResources().getDimension(resId);
@@ -52,7 +49,7 @@ public class KLineActivity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kline2);
 
-        chartView = findViewById(R.id.chart2);
+        stockChartView = findViewById(R.id.chart2);
 
         ////////////////////// READ DATA //////////////////////
         final List<Kline> klines = readFileSample();
@@ -61,7 +58,7 @@ public class KLineActivity2 extends AppCompatActivity {
         ////////////////////// AXIS //////////////////////
         final YAxis yAxisLeftKline = new YAxis();
         yAxisLeftKline.setPosition(YAxis.Position.LEFT);
-        yAxisLeftKline.setGridRows(4);
+        yAxisLeftKline.setGridRows(6);
         yAxisLeftKline.setUnit("Dollar");
         yAxisLeftKline.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
         yAxisLeftKline.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
@@ -73,7 +70,7 @@ public class KLineActivity2 extends AppCompatActivity {
 
         final YAxis yAxisLeftRSI = new YAxis();
         yAxisLeftRSI.setPosition(YAxis.Position.LEFT);
-        yAxisLeftRSI.setGridRows(4);
+        yAxisLeftRSI.setGridRows(6);
         yAxisLeftRSI.setUnit("%");
         yAxisLeftRSI.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
         yAxisLeftRSI.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
@@ -85,72 +82,81 @@ public class KLineActivity2 extends AppCompatActivity {
         ////////////////////// END AXIS //////////////////////
 
         ////////////////////// DRAWING AREA //////////////////////
-        DrawingArea drawingAreaKline = new DrawingArea();
-        drawingAreaKline.setLeftAxis(yAxisLeftKline);
-        DrawingArea drawingAreaRSI = new DrawingArea();
-        drawingAreaRSI.setLeftAxis(yAxisLeftRSI);
+        Frame frameKline = new Frame();
+        frameKline.setLeftAxis(yAxisLeftKline);
+        frameKline.setGridRows(6);
+        frameKline.setGridColumns(6);
+        Frame frameRSI = new Frame();
+        frameRSI.setLeftAxis(yAxisLeftRSI);
+        frameRSI.setGridRows(6);
+        frameRSI.setGridColumns(6);
         ////////////////////// DRAWING AREA //////////////////////
 
 
         ////////////////////// CHART VIEW FRAGMENT //////////////////////
-        final ChartViewFragment chartViewFragmentKline = new ChartViewFragment();
-        chartViewFragmentKline.setDrawingArea(drawingAreaKline);
-        chartViewFragmentKline.getDrawingArea().setViewport(new Viewport());
-        chartViewFragmentKline.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
-        chartViewFragmentKline.setAutoScale(true);
+        final Chart chartKline = new Chart();
+        chartKline.setFrame(frameKline);
+        chartKline.getFrame().setViewport(new Viewport());
+        chartKline.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
+        chartKline.setAutoScale(true);
+        chartKline.setGridRows(6);
+        chartKline.setGridColumns(6);
 
-        final ChartViewFragment chartViewFragmentRSI = new ChartViewFragment();
-        chartViewFragmentRSI.setDrawingArea(drawingAreaRSI);
-        chartViewFragmentRSI.getDrawingArea().setViewport(new Viewport());
-        chartViewFragmentRSI.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
-        chartViewFragmentRSI.setAutoScale(false);
 
-        final DrawingKlineChart drawingKlineChart = new DrawingKlineChart(chartViewFragmentKline);
-        drawingKlineChart.setDecreasingColor(ContextCompat.getColor(this, R.color.chart_red));
-        drawingKlineChart.setIncreasingColor(ContextCompat.getColor(this, R.color.chart_green));
-        drawingKlineChart.setKlineWidth(getDimension(R.dimen.chart_kline_width));
-        drawingKlineChart.setKlineInnerLineWidth(getDimension(R.dimen.chart_kline_inner_width));
-        chartViewFragmentKline.addDrawingElement(drawingKlineChart);
+        final Chart chartRSI = new Chart();
+        chartRSI.setFrame(frameRSI);
+        chartRSI.getFrame().setViewport(new Viewport());
+        chartRSI.setGridLineColor(ContextCompat.getColor(this, R.color.chart_rsi3));
+        chartRSI.setAutoScale(false);
+        chartRSI.setGridRows(6);
+        chartRSI.setGridColumns(6);
 
-        final DrawingRSIChart drawingRSI5Chart = new DrawingRSIChart(chartViewFragmentRSI);
+        final KLineElement componentKlineChart = new KLineElement(chartKline);
+        componentKlineChart.setDecreasingColor(ContextCompat.getColor(this, R.color.chart_red));
+        componentKlineChart.setIncreasingColor(ContextCompat.getColor(this, R.color.chart_green));
+        componentKlineChart.setKlineWidth(getDimension(R.dimen.chart_kline_width));
+        componentKlineChart.setKlineInnerLineWidth(getDimension(R.dimen.chart_kline_inner_width));
+        chartKline.addDrawingElement(componentKlineChart);
+
+        final RSIElement drawingRSI5Chart = new RSIElement(chartRSI);
         drawingRSI5Chart.setLineColor(ContextCompat.getColor(this, R.color.chart_rsi1));
         drawingRSI5Chart.setLineWidth(getDimension(R.dimen.chart_rsi_line_width));
 
-        final DrawingRSIChart drawingRSI9Chart = new DrawingRSIChart(chartViewFragmentRSI);
+        final RSIElement drawingRSI9Chart = new RSIElement(chartRSI);
         drawingRSI9Chart.setLineColor(ContextCompat.getColor(this, R.color.chart_rsi2));
         drawingRSI9Chart.setLineWidth(getDimension(R.dimen.chart_rsi_line_width));
 
-        final DrawingRSIChart drawingRSI14Chart = new DrawingRSIChart(chartViewFragmentRSI);
+        final RSIElement drawingRSI14Chart = new RSIElement(chartRSI);
         drawingRSI14Chart.setLineColor(ContextCompat.getColor(this, R.color.chart_rsi3));
         drawingRSI14Chart.setLineWidth(getDimension(R.dimen.chart_rsi_line_width));
 
-        chartViewFragmentRSI.addDrawingElement(drawingRSI5Chart);
-        chartViewFragmentRSI.addDrawingElement(drawingRSI9Chart);
-        chartViewFragmentRSI.addDrawingElement(drawingRSI14Chart);
+        chartRSI.addDrawingElement(drawingRSI5Chart);
+        chartRSI.addDrawingElement(drawingRSI9Chart);
+        chartRSI.addDrawingElement(drawingRSI14Chart);
         ////////////////////// END CHART VIEW FRAGMENT //////////////////////
 
-        chartView.addChartViewFragment(chartViewFragmentKline);
-        chartView.addChartViewFragment(chartViewFragmentRSI);
+        stockChartView.addChartViewFragment(chartKline);
+        stockChartView.addChartViewFragment(chartRSI);
 
 
-        chartView.setTimeUnit(TimeUnit.ONE_DAY);
-        chartView.setMaxIndex(klines.size() - 1);
-        chartView.setLastDate(klines.get(klines.size() - 1).openTime);
-        chartView.setScreenDataCount(60);
+        stockChartView.setTimeUnit(TimeUnit.ONE_DAY);
+        stockChartView.setMaxIndex(klines.size() - 1);
+        stockChartView.setLastDate(klines.get(klines.size() - 1).openTime);
+        stockChartView.setScreenDataCount(60);
 
-        chartView.setBackgroundColor(ContextCompat.getColor(this, R.color.chart_background));
-        chartView.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
-        chartView.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
-        chartView.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
-        chartView.setViewSeparatorColor(ContextCompat.getColor(this, R.color.chart_view_separator));
-        chartView.setTextYearSize((int) getDimension(R.dimen.chart_text_year_size));
-        chartView.setTextYearColor(ContextCompat.getColor(this, R.color.chart_text_year));
+        stockChartView.setBackgroundColor(ContextCompat.getColor(this, R.color.chart_background));
+        stockChartView.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
+        stockChartView.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
+        stockChartView.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
+        stockChartView.setViewSeparatorColor(ContextCompat.getColor(this, R.color.chart_view_separator));
+        stockChartView.setTextYearSize((int) getDimension(R.dimen.chart_text_year_size));
+        stockChartView.setTextYearColor(ContextCompat.getColor(this, R.color.chart_text_year));
 
-        chartView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+        stockChartView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                chartView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                Viewport viewportChartView = chartView.getViewportChartView();
+                stockChartView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                Viewport viewportChartView = stockChartView.getViewportChartView();
                 Viewport viewport = new Viewport();
                 viewport.setViewWidth(viewportChartView.getViewWidth());
                 viewport.setViewHeight(viewportChartView.getViewHeight());
@@ -161,12 +167,12 @@ public class KLineActivity2 extends AppCompatActivity {
                 viewportRSI.setViewHeight(viewportChartView.getViewHeight());
                 viewportRSI.setViewingPosition(new Rect(0, viewportChartView.getViewHeight() / 2, viewportChartView.getViewWidth(), viewportChartView.getViewHeight()));
 
-                chartViewFragmentKline.getDrawingArea().setViewport(viewport);
-                chartViewFragmentRSI.getDrawingArea().setViewport(viewportRSI);
+                chartKline.getFrame().setViewport(viewport);
+                chartRSI.getFrame().setViewport(viewportRSI);
 
-                chartView.invalidate();
-                Log.d("KLineActivity2" , "onGlobalLayout --- chartView.getWidth " + chartView.getWidth());
-                Log.d("KLineActivity2" , "onGlobalLayout --- chartView.getHeight " + chartView.getHeight());
+                stockChartView.invalidate();
+                Log.d("KLineActivity2" , "onGlobalLayout --- chartView.getWidth " + stockChartView.getWidth());
+                Log.d("KLineActivity2" , "onGlobalLayout --- chartView.getHeight " + stockChartView.getHeight());
 
             }
         });
@@ -183,12 +189,12 @@ public class KLineActivity2 extends AppCompatActivity {
                 RSISet rsiSet2 = Calculator.rsi(klinesSet, 9);
                 RSISet rsiSet3 = Calculator.rsi(klinesSet, 14);
 
-                drawingKlineChart.setChartData(klinesSet);
+                componentKlineChart.setChartData(klinesSet);
                 drawingRSI5Chart.setChartData(rsiSet1);
                 drawingRSI9Chart.setChartData(rsiSet2);
                 drawingRSI14Chart.setChartData(rsiSet3);
 
-                chartView.invalidate();
+                stockChartView.invalidate();
 
                 Log.d("KLineActivity", "klines size = " + klines.size());
             }

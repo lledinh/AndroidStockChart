@@ -2,9 +2,7 @@ package com.ledinh.androidstockchart.chart.set;
 
 import android.util.Pair;
 
-import com.ledinh.androidstockchart.chart.model.Kline;
 import com.ledinh.androidstockchart.chart.util.TimeUnit;
-import com.ledinh.androidstockchart.chart.view.element.DrawingElement;
 
 import java.util.List;
 

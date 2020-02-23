@@ -31,7 +31,6 @@ public class YAxis {
         this.paintTextAxis.setAntiAlias(true);
         this.paintTextAxisBackground = new Paint();
         this.paintTextUnit = new Paint();
-        this.gridRows = 4;
         this.unit = "";
     }
 

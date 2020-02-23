@@ -18,19 +18,19 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 
 import com.ledinh.androidstockchart.R;
-import com.ledinh.androidstockchart.chart.view.element.DrawingArea;
-import com.ledinh.androidstockchart.chart.view.element.DrawingElement;
+import com.ledinh.androidstockchart.chart.view.container.Chart;
+import com.ledinh.androidstockchart.chart.view.container.Frame;
 import com.ledinh.androidstockchart.chart.util.TimeUnit;
 import com.ledinh.androidstockchart.chart.util.Viewport;
+import com.ledinh.androidstockchart.chart.view.element.ChartElement;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-public class ChartView2 extends View implements
+public class StockChartView extends View implements
         GestureDetector.OnGestureListener {
 
     private GestureDetectorCompat mDetector;
@@ -41,11 +41,11 @@ public class ChartView2 extends View implements
     private Rect chartArea;
     private Rect timelineArea;
 
-    private DrawingArea drawingAreaTitle;
-    private DrawingArea drawingAreaChart;
-    private DrawingArea drawingAreaTimeline;
+    private Frame frameTitle;
+    private Frame frameChart;
+    private Frame frameTimeline;
 
-    private List<ChartViewFragment> chartViewFragments;
+    private List<Chart> charts;
 
     private int scrollX = 0;
     private boolean touch = false;
@@ -67,27 +67,27 @@ public class ChartView2 extends View implements
     private float spaceBetweenValue;
     private int screenDataCount;
 
-//    private List<DrawingElement> drawingElementList;
-//    private Map<Integer, DrawingElement> positionDrawingElement;
+//    private List<ChartElement> drawingElementList;
+//    private Map<Integer, ChartElement> positionDrawingElement;
 
-    public ChartView2(Context context) {
+    public StockChartView(Context context) {
         super(context);
         init();
     }
 
-    public ChartView2(Context context, @Nullable AttributeSet attrs) {
+    public StockChartView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
         initAttrs(attrs);
     }
 
-    public ChartView2(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public StockChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
         initAttrs(attrs);
     }
 
-    public ChartView2(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public StockChartView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
         initAttrs(attrs);
@@ -98,7 +98,7 @@ public class ChartView2 extends View implements
     }
 
     private void init() {
-        chartViewFragments = new ArrayList<>();
+        charts = new ArrayList<>();
 
         viewportChartView = new Viewport();
 //        drawingElementList = new ArrayList<>();
@@ -122,8 +122,8 @@ public class ChartView2 extends View implements
         mScroller = new OverScroller(getContext());
     }
 
-    public void addChartViewFragment(ChartViewFragment chartViewFragment) {
-        chartViewFragments.add(chartViewFragment);
+    public void addChartViewFragment(Chart chart) {
+        charts.add(chart);
     }
 
     private void drawGrid(Canvas canvas) {
@@ -173,16 +173,18 @@ public class ChartView2 extends View implements
 
         spaceBetweenValue = (float) viewportChartView.getViewWidth() / screenDataCount;
 
-        for (ChartViewFragment chartViewFragment: chartViewFragments) {
-            for (DrawingElement drawingElement: chartViewFragment.getDrawingElements()) {
-                drawingElement.setSpaceBetweenValue(spaceBetweenValue);
+        for (Chart chart : charts) {
+            for (ChartElement chartComponent : chart.getChartComponents()) {
+                chartComponent.setSpaceBetweenValue(spaceBetweenValue);
             }
         }
     }
 
     public int getIndexFromX(int x) {
-        int delta = (int) ((getWidth() - x) / spaceBetweenValue);
-        int index = maxIndex - delta;
+        int delta = (int) (x / spaceBetweenValue);
+        int index = delta;
+//        int delta = (int) ((getWidth() - x) / spaceBetweenValue);
+//        int index = maxIndex - delta;
 
         return index;
     }
@@ -282,8 +284,8 @@ public class ChartView2 extends View implements
         super.onDraw(canvas);
         canvas.drawColor(ContextCompat.getColor(getContext(), R.color.chart_background));
 
-        for (ChartViewFragment chartViewFragment : chartViewFragments) {
-            chartViewFragment.draw(canvas, translateX);
+        for (Chart chart : charts) {
+            chart.draw(canvas, 0, translateX);
         }
 
 //        drawGrid(canvas);
@@ -338,18 +340,26 @@ public class ChartView2 extends View implements
     }
 
     private void scaleAxis() {
-        int lastValueIndex = getIndexFromX((int) (viewportChartView.getViewWidth() - translateX));
-        int firstValueIndex = (int) (lastValueIndex - getScreenDataCount());
+//        int firstValueIndex = (int) (lastValueIndex - getScreenDataCount());
+//        int lastValueIndex = getIndexFromX((int) (viewportChartView.getViewWidth() - translateX));
+        int firstValueIndex = getIndexFromX((int) Math.abs(translateX));
+        int lastValueIndex = (int) (firstValueIndex + getScreenDataCount());
+        if (lastValueIndex >= 500) {
+            lastValueIndex = 499;
+        }
 
-        for (ChartViewFragment chartViewFragment : chartViewFragments) {
-            if (chartViewFragment.isAutoScale()) {
-                List<DrawingElement> drawingElements = chartViewFragment.getDrawingElements();
+        Log.d("StockChartView", "scaleAxis firstValueIndex = " + firstValueIndex);
+        Log.d("StockChartView", "scaleAxis lastValueIndex = " + lastValueIndex);
+
+        for (Chart chart : charts) {
+            if (chart.isAutoScale()) {
+                List<ChartElement> chartComponents = chart.getChartComponents();
 
                 int min = Integer.MAX_VALUE;
                 int max = Integer.MIN_VALUE;
 
-                for (DrawingElement drawingElement : drawingElements) {
-                    Pair<Integer, Integer> range = drawingElement.getRange(firstValueIndex, lastValueIndex);
+                for (ChartElement chartComponent : chartComponents) {
+                    Pair<Integer, Integer> range = chartComponent.getRange(firstValueIndex, lastValueIndex);
 
                     if (range.first < min) {
                         min = range.first;
@@ -360,10 +370,8 @@ public class ChartView2 extends View implements
                     }
                 }
 
-                Log.d("KLineChartView", "computeScroll min " + min);
-                Log.d("KLineChartView", "computeScroll max " + max);
-                chartViewFragment.getDrawingArea().getLeftAxis().setRange(min, max);
-                chartViewFragment.getDrawingArea().getLeftAxis().extendRange(10);
+                chart.getFrame().getLeftAxis().setRange(min, max);
+                chart.getFrame().getLeftAxis().extendRange(10);
             }
         }
     }
@@ -381,7 +389,7 @@ public class ChartView2 extends View implements
 
         scaleAxis();
 //
-//        for (DrawingElement drawingElement: drawingElementList) {
+//        for (ChartElement drawingElement: drawingElementList) {
 //            if (drawingElement.isAutoScale()) {
 //                drawingElement.updateAxisRangeFromIndex(firstValueIndex, lastValueIndex);
 //                drawingElement.getyAxis().extendRange(20);
@@ -402,55 +410,85 @@ public class ChartView2 extends View implements
         onScrollChanged(scrollX, 0, oldX, 0);
         invalidate();
 
-        if (scrollX < getScrollRightLimit()) {
-            scrollX = 0;
+        if (scrollX >= getTranslationMaxValue()) {
+            scrollX = getTranslationMaxValue();
         }
 
-        if (scrollX >= getScrollLeftLimit()) {
-            scrollX = getScrollLeftLimit() - 1;
+        if (scrollX <= getTranslationMinValue()) {
+            scrollX = getTranslationMinValue();
         }
 
-        Log.d("ChartView2", "getScrollRightLimit = " + getScrollRightLimit());
-        Log.d("ChartView2", "getScrollLeftLimit = " + getScrollLeftLimit());
+        Log.d("ChartView2", "getTranslationMinValue = " + getTranslationMinValue());
+        Log.d("ChartView2", "getTranslationMaxValue = " + getTranslationMaxValue());
         Log.d("ChartView2", "translateX = " + translateX);
         translateX = scrollX;
-    }
-
-    private int getScrollRightLimit() {
-        return 0;
-    }
-
-    private int getScrollLeftLimit() {
-        int maxIndex = Integer.MIN_VALUE;
-
-        for(ChartViewFragment chartViewFragment: chartViewFragments) {
-            for (DrawingElement drawingElement: chartViewFragment.getDrawingElements()) {
-                if (drawingElement.getMaxIndex() > maxIndex) {
-                    maxIndex = (int) (drawingElement.getChartData().getDataSize() * spaceBetweenValue - viewportChartView.getViewWidth());
-                }
-            }
-        }
-
-        return maxIndex;
     }
 
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
         super.onScrollChanged(l, t, oldl, oldt);
-        if (scrollX < getScrollRightLimit()) {
-            scrollX = 0;
+        Log.d("KLineChartView", "before scrollX = " + scrollX);
+
+        if (scrollX >= getTranslationMaxValue()) {
+            scrollX = getTranslationMaxValue();
         }
 
-        if (scrollX > getScrollLeftLimit()) {
-            scrollX = getScrollLeftLimit();
+        if (scrollX <= getTranslationMinValue()) {
+            scrollX = getTranslationMinValue();
         }
 
+        Log.d("KLineChartView", "scrollX = " + scrollX);
         translateX = scrollX;
+        Log.d("KLineChartView", "translateX = " + translateX);
 
-//        for (ChartViewFragment chartViewFragment : chartViewFragments) {
-//            chartViewFragment.t
+//        for (Chart chart : charts) {
+//            chart.t
 //        }
     }
+
+    private int getTranslationMaxValue() {
+        return 0;
+    }
+
+    private int getTranslationMinValue() {
+        int maxIndex = 0;
+        for (Chart chart : charts) {
+            List<ChartElement> chartComponents = chart.getChartComponents();
+            for (ChartElement chartElement: chartComponents) {
+                if (chartElement.getMaxIndex() > maxIndex) {
+                    maxIndex = chartElement.getMaxIndex();
+                }
+            }
+        }
+
+        Log.d("StockChartView", "spaceBetweenValue = " + spaceBetweenValue);
+        Log.d("StockChartView", "maxIndex = " + maxIndex);
+        Log.d("StockChartView", "viewportChartView.getViewWidth = " + viewportChartView.getViewWidth());
+        Log.d("StockChartView", "getTranslationMinValue = " + (- (maxIndex * spaceBetweenValue - viewportChartView.getViewWidth())));
+        Log.d("StockChartView", "maxIndex * spaceBetweenValue = " + (- (maxIndex * spaceBetweenValue)));
+
+        return (int) - (maxIndex * spaceBetweenValue - viewportChartView.getViewWidth() / 2);
+    }
+
+//
+//    private int getScrollRightLimit() {
+//        return 0;
+//    }
+//
+//    private int getScrollLeftLimit() {
+//        int maxIndex = Integer.MIN_VALUE;
+//
+//        for(Chart chart : charts) {
+//            for (ChartElement chartComponent : chart.getChartComponents()) {
+//                if (chartComponent.getMaxIndex() > maxIndex) {
+//                    maxIndex = (int) (chartComponent.getChartData().getDataSize() * spaceBetweenValue - viewportChartView.getViewWidth());
+//                }
+//            }
+//        }
+//
+//        return maxIndex;
+//    }
+
 
     @Override
     public boolean onDown(MotionEvent e) {
