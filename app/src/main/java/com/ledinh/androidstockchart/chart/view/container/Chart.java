@@ -44,7 +44,7 @@ public class Chart extends UIViewGroup {
     }
 
     public void draw(Canvas canvas, float beginX) {
-        draw(canvas, frame.getLeftAxis(), beginX, 0);
+        draw(canvas, beginX, 0);
     }
 
     public void draw(Canvas canvas, float beginX, float translateX) {
@@ -52,10 +52,10 @@ public class Chart extends UIViewGroup {
         drawGrid(canvas);
 
         for (ChartElement chartComponent : chartComponents) {
-            chartComponent.draw(canvas, frame.getLeftAxis(), beginX, translateX);
+            chartComponent.draw(canvas, beginX, translateX);
         }
 
-        frame.getLeftAxis().draw(canvas, frame.getViewport());
+//        frame.getLeftAxis().draw(canvas, frame.getViewport());
     }
 
     public void setGridLineSize(int size) {

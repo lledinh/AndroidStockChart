@@ -30,9 +30,9 @@ public abstract class UIViewGroup extends UIElement {
     }
 
     @Override
-    public void draw(Canvas canvas, YAxis yAxis, float beginX, float translateX) {
+    public void draw(Canvas canvas, float beginX, float translateX) {
         for (UIElement uiElement : uiElements) {
-            uiElement.draw(canvas, yAxis, beginX, translateX);
+            uiElement.draw(canvas, beginX, translateX);
         }
     }
 }

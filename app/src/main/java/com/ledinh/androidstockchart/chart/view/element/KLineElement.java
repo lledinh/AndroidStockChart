@@ -2,6 +2,8 @@ package com.ledinh.androidstockchart.chart.view.element;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.util.Log;
 
 import com.ledinh.androidstockchart.chart.YAxis;
 import com.ledinh.androidstockchart.chart.model.Kline;
@@ -18,8 +20,8 @@ public class KLineElement extends ChartElement<KlinesSet> {
 
     private float lastDate;
 
-    public KLineElement(Chart chart) {
-        super(chart);
+    public KLineElement(Rect position, YAxis yAxis) {
+        super(position, yAxis);
         paintIncreasing = new Paint();
         paintDecreasing = new Paint();
         paintSelectedKline = new Paint();
@@ -30,14 +32,14 @@ public class KLineElement extends ChartElement<KlinesSet> {
     }
 
     @Override
-    public void draw(Canvas canvas, YAxis yAxis, float beginDrawX, float translateX) {
+    public void draw(Canvas canvas, float beginDrawX, float translateX) {
         canvas.save();
         canvas.translate(translateX - (1 * spaceBetweenValue), 0);
-        drawKlines(canvas, yAxis, beginDrawX); //chart.getFrame().getViewport().getViewportWidth());
+        drawKlines(canvas, beginDrawX); //chart.getFrame().getViewport().getViewportWidth());
         canvas.restore();
     }
 
-    public void drawKlines(Canvas canvas, YAxis yAxis, float beginDrawX) {
+    public void drawKlines(Canvas canvas, float beginDrawX) {
         float x = beginDrawX;
 
         // The chart is drawn from right to left, beginning with the most recent value (last value of chartData)
@@ -51,13 +53,18 @@ public class KLineElement extends ChartElement<KlinesSet> {
                 p = paintDecreasing;
             }
 
-            double axisPosOpen = chart.getFrame().getViewport().getViewingPosition().top + yAxis.getInvertedAxisPos(kLine.open) * chart.getFrame().getViewport().getViewportHeight();
-            double axisPosClose = chart.getFrame().getViewport().getViewingPosition().top + yAxis.getInvertedAxisPos(kLine.close) * chart.getFrame().getViewport().getViewportHeight();
-            double axisPosHigh = chart.getFrame().getViewport().getViewingPosition().top + yAxis.getInvertedAxisPos(kLine.high) * chart.getFrame().getViewport().getViewportHeight();
-            double axisPosLow = chart.getFrame().getViewport().getViewingPosition().top + yAxis.getInvertedAxisPos(kLine.low) * chart.getFrame().getViewport().getViewportHeight();
+            double axisPosOpen = position.top + yAxis.getInvertedAxisPos(kLine.open) * getHeight();
+            double axisPosClose = position.top + yAxis.getInvertedAxisPos(kLine.close) * getHeight();
+            double axisPosHigh = position.top + yAxis.getInvertedAxisPos(kLine.high) * getHeight();
+            double axisPosLow = position.top + yAxis.getInvertedAxisPos(kLine.low) * getHeight();
+            Log.d("KLineActivity2", "axisPosOpen = " + axisPosOpen);
+            Log.d("KLineActivity2", "axisPosClose = " + axisPosOpen);
+            Log.d("KLineActivity2", "axisPosHigh = " + axisPosOpen);
+            Log.d("KLineActivity2", "axisPosLow = " + axisPosOpen);
 
             drawKline(canvas, x, axisPosOpen, axisPosClose, axisPosHigh, axisPosLow, p);
             x += spaceBetweenValue;
+            Log.d("KLineActivity2", "spaceBetweenValue = " + spaceBetweenValue);
         }
     }
 

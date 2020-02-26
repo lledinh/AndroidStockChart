@@ -26,14 +26,17 @@ public abstract class ChartElement<E extends ChartSet> extends UIElement {
 
     protected Frame frame;
     protected Paint paint;
-    protected Chart chart;
 
-    public ChartElement(Chart chart) {
+    public ChartElement(Rect position, YAxis yAxis) {
+        super(position);
+        this.yAxis = yAxis;
+    }
+
+    public ChartElement() {
         this.yAxis = new YAxis();
         autoScale = true;
         gridRows = 4;
         weight = 1;
-        this.chart = chart;
     }
 
     public int getMaxIndex() {
@@ -45,7 +48,7 @@ public abstract class ChartElement<E extends ChartSet> extends UIElement {
     }
 
     public void setViewportPosition(int left, int top, int right, int bottom) {
-        chart.getFrame().getViewport().setViewingPosition(new Rect(left, top, right, bottom));
+        position = new Rect(left, top, right, bottom);
     }
 
     public void setAxisMin(double min) {
@@ -56,10 +59,6 @@ public abstract class ChartElement<E extends ChartSet> extends UIElement {
         yAxis.setAxisMax(max);
     }
 
-
-    public Viewport getViewport() {
-        return chart.getFrame().getViewport();
-    }
 
     public float getSpaceBetweenValue() {
         return spaceBetweenValue;
@@ -114,34 +113,6 @@ public abstract class ChartElement<E extends ChartSet> extends UIElement {
         this.weight = weight;
     }
 
-    public void setTextAxisColor(int color) {
-        yAxis.setTextAxisColor(color);
-    }
-
-    public void setTextAxisSize(float size) {
-        yAxis.setTextAxisSize(size);
-    }
-
-    public void setTextAxisBackgroundColor(int color) {
-        yAxis.setTextAxisBackgroundColor(color);
-    }
-
-    public void setTextAxisLeftPadding(int size) {
-        yAxis.setLeftPadding(size);
-    }
-
-    public void setUnit(String unit) {
-        yAxis.setUnit(unit);
-    }
-
-
-    public void setTextUnitColor(int color) {
-        yAxis.setTextUnitColor(color);
-    }
-
-    public void setTextUnitSize(int size) {
-        yAxis.setTextUnitSize(size);
-    }
 
 
     public Frame getFrame() {

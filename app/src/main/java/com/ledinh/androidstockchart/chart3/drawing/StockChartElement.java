@@ -1,25 +1,16 @@
-package com.ledinh.androidstockchart.chart.view;
+package com.ledinh.androidstockchart.chart3.drawing;
 
-import android.graphics.Canvas;
 import android.graphics.Rect;
 
-import com.ledinh.androidstockchart.chart.YAxis;
-
-public abstract class UIElement {
+public class StockChartElement {
     protected Rect position;
 
-    public UIElement() {
+    public StockChartElement() {
         position = new Rect();
     }
 
-    public UIElement(Rect position) {
+    public StockChartElement(Rect position) {
         this.position = position;
-    }
-
-    public abstract void draw(Canvas canvas, float beginDrawX, float translateX);
-
-    public void draw(Canvas canvas, float beginDrawX) {
-        draw(canvas, beginDrawX, 0);
     }
 
     public int getWidth() {
@@ -62,4 +53,11 @@ public abstract class UIElement {
         position.bottom = bottom;
     }
 
+    public Rect getPosition() {
+        return position;
+    }
+
+    public void setPosition(Rect position) {
+        this.position = position;
+    }
 }

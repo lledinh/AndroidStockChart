@@ -172,6 +172,7 @@ public class StockChartView extends View implements
         timelineArea.right = w;
 
         spaceBetweenValue = (float) viewportChartView.getViewWidth() / screenDataCount;
+        Log.d("KLineActivity2", "spaceBetweenValue = " + spaceBetweenValue);
 
         for (Chart chart : charts) {
             for (ChartElement chartComponent : chart.getChartComponents()) {
@@ -589,5 +590,9 @@ public class StockChartView extends View implements
 
     public void setViewportChartView(Viewport viewportChartView) {
         this.viewportChartView = viewportChartView;
+    }
+
+    public float getSpaceBetweenValue() {
+        return spaceBetweenValue;
     }
 }

@@ -1,9 +1,6 @@
-package com.ledinh.androidstockchart.chart.view;
+package com.ledinh.androidstockchart.chart2.view2.drawing;
 
-import android.graphics.Canvas;
 import android.graphics.Rect;
-
-import com.ledinh.androidstockchart.chart.YAxis;
 
 public abstract class UIElement {
     protected Rect position;
@@ -16,11 +13,11 @@ public abstract class UIElement {
         this.position = position;
     }
 
-    public abstract void draw(Canvas canvas, float beginDrawX, float translateX);
-
-    public void draw(Canvas canvas, float beginDrawX) {
-        draw(canvas, beginDrawX, 0);
-    }
+//    public abstract void draw(Canvas canvas, float translateX);
+//
+//    public void draw(Canvas canvas) {
+//        draw(canvas, 0);
+//    }
 
     public int getWidth() {
         return position.right - position.left;
