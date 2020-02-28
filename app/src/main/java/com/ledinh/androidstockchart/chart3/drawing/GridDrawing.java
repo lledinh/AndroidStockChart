@@ -25,7 +25,7 @@ public class GridDrawing extends StockChartElement {
         float columnSpace = getWidth() / grid.getGridColumns();
 
         for (int i = 0; i <= grid.getGridColumns(); i++) {
-            canvas.drawLine(position.top + columnSpace * i, 0, position.top + columnSpace * i, getHeight(), paintGridLine);
+            canvas.drawLine(position.top + columnSpace * i, 0, position.top + columnSpace * i, position.bottom, paintGridLine);
         }
     }
     private void drawGridRows(Canvas canvas, Grid grid) {

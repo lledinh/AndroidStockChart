@@ -20,8 +20,9 @@ public abstract class ChartSet<Data> {
     }
 
     public abstract Pair<Integer, Integer> getRange(int firstValueIndex, int lastValueIndex);
+
     public Pair<Integer, Integer> getRange() {
-        return getRange(0, values.size());
+        return getRange(0, values.size() - 1);
     }
 
 

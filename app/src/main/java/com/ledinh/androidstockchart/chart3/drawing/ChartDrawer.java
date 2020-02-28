@@ -5,20 +5,29 @@ import android.graphics.Canvas;
 import com.ledinh.androidstockchart.chart3.element.Chart;
 import com.ledinh.androidstockchart.chart3.element.ChartElement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChartDrawer extends StockChartElement {
     private GridDrawing gridDrawing;
     private YAxisDrawing yAxisLeftDrawing;
     private YAxisDrawing yAxisRightDrawing;
-    private List<ChartElement> chartElements;
+    private List<ChartElementDrawer> chartElementDrawers;
 
     public ChartDrawer() {
+        chartElementDrawers = new ArrayList<>();
     }
 
     public void draw(Canvas canvas, Chart chart, float translateX) {
         gridDrawing.draw(canvas, chart.getGrid());
         yAxisLeftDrawing.draw(canvas, chart.getGrid(), chart.getyAxisLeft());
+
+        for (int i = 0; i < chart.getChartElements().size(); i++) {
+            ChartElement chartElement = chart.getChartElements().get(i);
+            ChartElementDrawer chartElementDrawer = chartElementDrawers.get(i);
+
+            chartElementDrawer.draw(canvas, chartElement.getData(), chart.getyAxisLeft(), translateX);
+        }
     }
 
     public GridDrawing getGridDrawing() {
@@ -45,11 +54,15 @@ public class ChartDrawer extends StockChartElement {
         this.yAxisRightDrawing = yAxisRightDrawing;
     }
 
-    public List<ChartElement> getChartElements() {
-        return chartElements;
+    public void addChartElementDrawer(ChartElementDrawer chartElementDrawer) {
+        chartElementDrawers.add(chartElementDrawer);
     }
 
-    public void setChartElements(List<ChartElement> chartElements) {
-        this.chartElements = chartElements;
+    public List<ChartElementDrawer> getChartElementDrawers() {
+        return chartElementDrawers;
+    }
+
+    public void setChartElementDrawers(List<ChartElementDrawer> chartElementDrawers) {
+        this.chartElementDrawers = chartElementDrawers;
     }
 }

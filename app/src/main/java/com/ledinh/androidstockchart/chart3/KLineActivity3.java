@@ -3,6 +3,7 @@ package com.ledinh.androidstockchart.chart3;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.ViewTreeObserver;
 
 import androidx.annotation.DimenRes;
@@ -25,15 +26,17 @@ import com.ledinh.androidstockchart.chart.set.KlinesSet;
 import com.ledinh.androidstockchart.chart.set.RSISet;
 import com.ledinh.androidstockchart.chart.util.TimeUnit;
 import com.ledinh.androidstockchart.chart.util.Viewport;
-import com.ledinh.androidstockchart.chart.view.element.KLineElement;
 import com.ledinh.androidstockchart.chart.view.element.RSIElement;
 import com.ledinh.androidstockchart.chart3.drawing.ChartDrawer;
+import com.ledinh.androidstockchart.chart3.drawing.ChartElementDrawer;
 import com.ledinh.androidstockchart.chart3.drawing.GridDrawing;
+import com.ledinh.androidstockchart.chart3.drawing.KLineDrawing;
 import com.ledinh.androidstockchart.chart3.drawing.StockChartDrawer;
 import com.ledinh.androidstockchart.chart3.drawing.YAxisDrawing;
 import com.ledinh.androidstockchart.chart3.element.Chart;
 import com.ledinh.androidstockchart.chart3.element.ChartElement;
 import com.ledinh.androidstockchart.chart3.element.Grid;
+import com.ledinh.androidstockchart.chart3.element.KLineElement;
 import com.ledinh.androidstockchart.chart3.element.StockChart;
 import com.ledinh.androidstockchart.math.Calculator;
 
@@ -62,16 +65,22 @@ public class KLineActivity3 extends AppCompatActivity {
 
         Grid grid = new Grid(5, 5);
 
-        YAxis yAxis = new YAxis();
+        final YAxis yAxis = new YAxis();
+        yAxis.setAxisMax(100);
+        yAxis.setAxisMin(0);
 
         Chart chart = new Chart();
         chart.setGrid(grid);
         chart.setyAxisLeft(yAxis);
 
+        final KLineElement kLineElement = new KLineElement();
+        chart.addChartElement(kLineElement);
+
         stockChart.addChart(chart);
 
 
         StockChartDrawer stockChartDrawer = new StockChartDrawer();
+        stockChartDrawer.setScreenDataCount(60);
 
         ChartDrawer chartDrawer = new ChartDrawer();
 
@@ -90,6 +99,16 @@ public class KLineActivity3 extends AppCompatActivity {
         chartDrawer.setGridDrawing(gridDrawing);
         chartDrawer.setyAxisLeftDrawing(yAxisLeftDrawing);
 
+        final KLineDrawing kLineDrawing = new KLineDrawing();
+        kLineDrawing.getPaintDecreasing().setColor(ContextCompat.getColor(KLineActivity3.this, R.color.chart_red));
+        kLineDrawing.getPaintIncreasing().setColor(ContextCompat.getColor(KLineActivity3.this, R.color.chart_green));
+        kLineDrawing.setKlineWidth(getDimension(R.dimen.chart_kline_width));
+        kLineDrawing.setKlineInnerLineWidth(getDimension(R.dimen.chart_kline_inner_width));
+        kLineDrawing.setSpaceBetweenValue(10);
+
+
+        chartDrawer.addChartElementDrawer(kLineDrawing);
+
         stockChartDrawer.addChartDrawer(chart, chartDrawer);
 
 
@@ -105,6 +124,11 @@ public class KLineActivity3 extends AppCompatActivity {
                     @Override
                     public void run() {
                         KlinesSet klinesSet = new KlinesSet(klines, TimeUnit.ONE_DAY);
+                        kLineElement.setData(klinesSet);
+                        Pair<Integer, Integer> range = klinesSet.getRange();
+                        float min = range.first;
+                        float max = range.second;
+                        yAxis.setRange(min, max);
 
                         stockChartView.invalidate();
 

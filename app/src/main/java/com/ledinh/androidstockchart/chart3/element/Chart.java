@@ -6,14 +6,14 @@ import com.ledinh.androidstockchart.chart3.drawing.StockChartElement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Chart extends StockChartElement {
+public class Chart {
     private Grid grid;
     private YAxis yAxisLeft;
     private YAxis yAxisRight;
     private List<ChartElement> chartElements;
 
     public Chart() {
-
+        chartElements = new ArrayList<>();
     }
 
     public Chart(Grid grid, YAxis yAxisLeft, YAxis yAxisRight) {
@@ -60,5 +60,9 @@ public class Chart extends StockChartElement {
 
     public void setChartElements(List<ChartElement> chartElements) {
         this.chartElements = chartElements;
+    }
+
+    public void addChartElement(ChartElement chartElement) {
+        chartElements.add(chartElement);
     }
 }

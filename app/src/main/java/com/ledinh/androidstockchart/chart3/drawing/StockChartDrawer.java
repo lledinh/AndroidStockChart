@@ -12,6 +12,9 @@ public class StockChartDrawer extends StockChartElement {
     private Map<Chart, ChartDrawer> chartDrawers;
     private TimelineDrawer timelineDrawer;
 
+    private float spaceBetweenValue;
+    private int screenDataCount;
+
     public StockChartDrawer() {
         chartDrawers = new HashMap<>();
     }
@@ -48,5 +51,28 @@ public class StockChartDrawer extends StockChartElement {
 
     public void setChartDrawers(Map<Chart, ChartDrawer> chartDrawers) {
         this.chartDrawers = chartDrawers;
+    }
+
+    public int getScreenDataCount() {
+        return screenDataCount;
+    }
+
+    public void setScreenDataCount(int screenDataCount) {
+        this.screenDataCount = screenDataCount;
+    }
+
+    public float getSpaceBetweenValue() {
+        return spaceBetweenValue;
+    }
+
+    public void setSpaceBetweenValue(float spaceBetweenValue) {
+        this.spaceBetweenValue = spaceBetweenValue;
+
+        for (Map.Entry<Chart, ChartDrawer> pair: chartDrawers.entrySet()) {
+            ChartDrawer chartDrawer = pair.getValue();
+            for (ChartElementDrawer chartElementDrawer: chartDrawer.getChartElementDrawers()) {
+                chartElementDrawer.setSpaceBetweenValue(spaceBetweenValue);
+            }
+        }
     }
 }
