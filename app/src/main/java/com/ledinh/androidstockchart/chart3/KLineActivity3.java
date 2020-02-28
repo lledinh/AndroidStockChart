@@ -27,6 +27,7 @@ import com.ledinh.androidstockchart.chart.set.RSISet;
 import com.ledinh.androidstockchart.chart.util.TimeUnit;
 import com.ledinh.androidstockchart.chart.util.Viewport;
 import com.ledinh.androidstockchart.chart.view.element.RSIElement;
+import com.ledinh.androidstockchart.chart3.base.OnTranslateListener;
 import com.ledinh.androidstockchart.chart3.drawing.ChartDrawer;
 import com.ledinh.androidstockchart.chart3.drawing.ChartElementDrawer;
 import com.ledinh.androidstockchart.chart3.drawing.GridDrawing;
@@ -72,6 +73,7 @@ public class KLineActivity3 extends AppCompatActivity {
         Chart chart = new Chart();
         chart.setGrid(grid);
         chart.setyAxisLeft(yAxis);
+        chart.setAutoScale(true);
 
         final KLineElement kLineElement = new KLineElement();
         chart.addChartElement(kLineElement);

@@ -29,6 +29,8 @@ public class KLineDrawing extends ChartElementDrawer<KlinesSet> {
     }
 
     public void draw(Canvas canvas, KlinesSet data, YAxis yAxis, float translateX) {
+        canvas.save();
+        canvas.translate(translateX, 0);
         Log.d("KLineDrawing", "KLineDrawing");
         float x = 0;
 
@@ -50,6 +52,7 @@ public class KLineDrawing extends ChartElementDrawer<KlinesSet> {
             drawKline(canvas, x, axisPosOpen, axisPosClose, axisPosHigh, axisPosLow, p);
             x += spaceBetweenValue;
         }
+        canvas.restore();
     }
 
     private void drawKline(Canvas canvas, float x, double axisPosOpen, double axisPosClose, double axisPosHigh, double axisPosLow, Paint p) {
