@@ -3,6 +3,7 @@ package com.ledinh.androidstockchart.chart3.drawing;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
+import com.ledinh.androidstockchart.chart3.drawing.simple.StaticGridDrawing;
 import com.ledinh.androidstockchart.chart3.element.Chart;
 import com.ledinh.androidstockchart.chart3.element.ChartElement;
 
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChartDrawer extends StockChartElement {
-    private GridDrawing gridDrawing;
+    private StaticGridDrawing staticGridDrawing;
     private YAxisDrawing yAxisLeftDrawing;
     private YAxisDrawing yAxisRightDrawing;
     private List<ChartElementDrawer> chartElementDrawers;
@@ -20,8 +21,8 @@ public class ChartDrawer extends StockChartElement {
     }
 
     public void draw(Canvas canvas, Chart chart, float translateX) {
-        gridDrawing.draw(canvas, chart.getGrid());
-        yAxisLeftDrawing.draw(canvas, chart.getGrid(), chart.getyAxisLeft());
+        staticGridDrawing.draw(canvas, chart.getStaticGrid());
+        yAxisLeftDrawing.draw(canvas, chart.getStaticGrid(), chart.getyAxisLeft());
 
         for (int i = 0; i < chart.getChartElements().size(); i++) {
             ChartElement chartElement = chart.getChartElements().get(i);
@@ -40,12 +41,12 @@ public class ChartDrawer extends StockChartElement {
         }
     }
 
-    public GridDrawing getGridDrawing() {
-        return gridDrawing;
+    public StaticGridDrawing getStaticGridDrawing() {
+        return staticGridDrawing;
     }
 
-    public void setGridDrawing(GridDrawing gridDrawing) {
-        this.gridDrawing = gridDrawing;
+    public void setStaticGridDrawing(StaticGridDrawing staticGridDrawing) {
+        this.staticGridDrawing = staticGridDrawing;
     }
 
     public YAxisDrawing getyAxisLeftDrawing() {

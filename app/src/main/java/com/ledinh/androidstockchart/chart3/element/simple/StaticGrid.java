@@ -1,15 +1,15 @@
-package com.ledinh.androidstockchart.chart3.element;
+package com.ledinh.androidstockchart.chart3.element.simple;
 
-public class Grid {
+public class StaticGrid {
     private int gridRows;
     private int gridColumns;
 
-    public Grid() {
+    public StaticGrid() {
         gridRows = 2;
         gridColumns = 2;
     }
 
-    public Grid(int gridRows, int gridColumns) {
+    public StaticGrid(int gridRows, int gridColumns) {
         this.gridRows = gridRows;
         this.gridColumns = gridColumns;
     }

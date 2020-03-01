@@ -1,17 +1,17 @@
 package com.ledinh.androidstockchart.chart3.element;
 
+import com.ledinh.androidstockchart.chart3.element.simple.StaticTimeline;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class StockChart {
     private List<Chart> charts;
-    private Timeline timeline;
-    private int columns;
+    private StaticTimeline staticTimeline;
 
     public StockChart() {
         charts = new ArrayList<>();
-        timeline = new Timeline();
-        columns = 5;
+        staticTimeline = new StaticTimeline();
     }
 
     public void addChart(Chart chart) {
@@ -26,19 +26,11 @@ public class StockChart {
         this.charts = charts;
     }
 
-    public Timeline getTimeline() {
-        return timeline;
+    public StaticTimeline getStaticTimeline() {
+        return staticTimeline;
     }
 
-    public void setTimeline(Timeline timeline) {
-        this.timeline = timeline;
-    }
-
-    public int getColumns() {
-        return columns;
-    }
-
-    public void setColumns(int columns) {
-        this.columns = columns;
+    public void setStaticTimeline(StaticTimeline staticTimeline) {
+        this.staticTimeline = staticTimeline;
     }
 }

@@ -4,13 +4,14 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.ledinh.androidstockchart.chart.YAxis;
+import com.ledinh.androidstockchart.chart3.element.simple.StaticGrid;
 import com.ledinh.androidstockchart.chart3.event.OnRangeChangeListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Chart implements OnRangeChangeListener {
-    private Grid grid;
+    private StaticGrid staticGrid;
     private YAxis yAxisLeft;
     private YAxis yAxisRight;
     private List<ChartElement> chartElements;
@@ -24,15 +25,15 @@ public class Chart implements OnRangeChangeListener {
         autoScale = false;
     }
 
-    public Chart(Grid grid, YAxis yAxisLeft, YAxis yAxisRight) {
-        this.grid = grid;
+    public Chart(StaticGrid staticGrid, YAxis yAxisLeft, YAxis yAxisRight) {
+        this.staticGrid = staticGrid;
         this.yAxisLeft = yAxisLeft;
         this.yAxisRight = yAxisRight;
         chartElements = new ArrayList<>();
     }
 
-    public Chart(Grid grid, YAxis yAxisLeft, YAxis yAxisRight, List<ChartElement> chartElements) {
-        this.grid = grid;
+    public Chart(StaticGrid staticGrid, YAxis yAxisLeft, YAxis yAxisRight, List<ChartElement> chartElements) {
+        this.staticGrid = staticGrid;
         this.yAxisLeft = yAxisLeft;
         this.yAxisRight = yAxisRight;
         this.chartElements = chartElements;
@@ -40,7 +41,6 @@ public class Chart implements OnRangeChangeListener {
 
     @Override
     public void onRangeChange(int firstValueIndex, int lastValueIndex) {
-        Log.d("StockChartView3", "chart " + firstValueIndex + " " + lastValueIndex);
         scaleAxis(firstValueIndex, lastValueIndex);
     }
 
@@ -80,12 +80,12 @@ public class Chart implements OnRangeChangeListener {
         }
     }
 
-    public Grid getGrid() {
-        return grid;
+    public StaticGrid getStaticGrid() {
+        return staticGrid;
     }
 
-    public void setGrid(Grid grid) {
-        this.grid = grid;
+    public void setStaticGrid(StaticGrid staticGrid) {
+        this.staticGrid = staticGrid;
     }
 
     public YAxis getyAxisLeft() {

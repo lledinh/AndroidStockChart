@@ -3,8 +3,9 @@ package com.ledinh.androidstockchart.chart3.drawing;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
+import com.ledinh.androidstockchart.chart3.drawing.simple.StaticTimelineDrawer;
 import com.ledinh.androidstockchart.chart3.element.Chart;
-import com.ledinh.androidstockchart.chart3.element.Timeline;
+import com.ledinh.androidstockchart.chart3.element.simple.StaticTimeline;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class StockChartDrawer extends StockChartElement {
     private Map<Chart, ChartDrawer> chartDrawers;
     private List<Chart> chartDrawersOrders;
-    private TimelineDrawer timelineDrawer;
+    private StaticTimelineDrawer staticTimelineDrawer;
 
     private float spaceBetweenValue;
     private int screenDataCount;
@@ -22,14 +23,14 @@ public class StockChartDrawer extends StockChartElement {
     public StockChartDrawer() {
         chartDrawers = new HashMap<>();
         chartDrawersOrders = new ArrayList<>();
-        timelineDrawer = new TimelineDrawer();
+        staticTimelineDrawer = new StaticTimelineDrawer();
     }
 
     public StockChartDrawer(Rect position) {
         super(position);
     }
 
-    public void draw(Canvas canvas, Timeline timeline, float translateX) {
+    public void draw(Canvas canvas, StaticTimeline staticTimeline, float translateX) {
         for (Chart chart : chartDrawersOrders) {
             ChartDrawer chartDrawer = chartDrawers.get(chart);
 
@@ -38,7 +39,7 @@ public class StockChartDrawer extends StockChartElement {
             }
         }
 
-        timelineDrawer.draw(canvas, 5, timeline);
+        staticTimelineDrawer.draw(canvas, 5, staticTimeline);
     }
 
     public int getWeightSum() {
@@ -57,12 +58,12 @@ public class StockChartDrawer extends StockChartElement {
         chartDrawersOrders.add(chart);
     }
 
-    public TimelineDrawer getTimelineDrawer() {
-        return timelineDrawer;
+    public StaticTimelineDrawer getStaticTimelineDrawer() {
+        return staticTimelineDrawer;
     }
 
-    public void setTimelineDrawer(TimelineDrawer timelineDrawer) {
-        this.timelineDrawer = timelineDrawer;
+    public void setStaticTimelineDrawer(StaticTimelineDrawer staticTimelineDrawer) {
+        this.staticTimelineDrawer = staticTimelineDrawer;
     }
 
     public Map<Chart, ChartDrawer> getChartDrawers() {

@@ -24,13 +24,14 @@ import com.ledinh.androidstockchart.chart.set.KlinesSet;
 import com.ledinh.androidstockchart.chart.set.RSISet;
 import com.ledinh.androidstockchart.chart.util.TimeUnit;
 import com.ledinh.androidstockchart.chart3.drawing.ChartDrawer;
-import com.ledinh.androidstockchart.chart3.drawing.GridDrawing;
+import com.ledinh.androidstockchart.chart3.drawing.expanded.ExpandedGridDrawing;
+import com.ledinh.androidstockchart.chart3.drawing.simple.StaticGridDrawing;
 import com.ledinh.androidstockchart.chart3.drawing.KLineDrawing;
 import com.ledinh.androidstockchart.chart3.drawing.RSIDrawing;
 import com.ledinh.androidstockchart.chart3.drawing.StockChartDrawer;
 import com.ledinh.androidstockchart.chart3.drawing.YAxisDrawing;
 import com.ledinh.androidstockchart.chart3.element.Chart;
-import com.ledinh.androidstockchart.chart3.element.Grid;
+import com.ledinh.androidstockchart.chart3.element.simple.StaticGrid;
 import com.ledinh.androidstockchart.chart3.element.KLineElement;
 import com.ledinh.androidstockchart.chart3.element.RSIElement;
 import com.ledinh.androidstockchart.chart3.element.StockChart;
@@ -60,14 +61,14 @@ public class KLineActivity3 extends AppCompatActivity {
         final StockChart stockChart = new StockChart();
 
         ///////////// KLINE /////////////
-        Grid gridKLine = new Grid(5, stockChart.getColumns());
+        StaticGrid staticGridKLine = new StaticGrid(5, stockChart.getColumns());
 
         final YAxis yAxisKLine = new YAxis();
         yAxisKLine.setAxisMax(100);
         yAxisKLine.setAxisMin(0);
 
         Chart chartKLine = new Chart();
-        chartKLine.setGrid(gridKLine);
+        chartKLine.setStaticGrid(staticGridKLine);
         chartKLine.setyAxisLeft(yAxisKLine);
         chartKLine.setAutoScale(true);
 
@@ -77,14 +78,14 @@ public class KLineActivity3 extends AppCompatActivity {
 
 
         ///////////// RSI /////////////
-        Grid gridRSI = new Grid(5, stockChart.getColumns());
+        StaticGrid staticGridRSI = new StaticGrid(5, stockChart.getColumns());
 
         final YAxis yAxisRSI = new YAxis();
         yAxisKLine.setAxisMax(100);
         yAxisKLine.setAxisMin(0);
 
         Chart chartRSI = new Chart();
-        chartRSI.setGrid(gridRSI);
+        chartRSI.setStaticGrid(staticGridRSI);
         chartRSI.setyAxisLeft(yAxisRSI);
         chartRSI.setAutoScale(false);
 
@@ -106,9 +107,15 @@ public class KLineActivity3 extends AppCompatActivity {
         ChartDrawer chartDrawerKLine = new ChartDrawer();
         chartDrawerKLine.setWeight(4);
 
-        GridDrawing gridDrawingKLine = new GridDrawing();
-        gridDrawingKLine.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
-        gridDrawingKLine.setGridLineSize(getDimension(R.dimen.chart_grid_line_width));
+        StaticGridDrawing staticGridDrawingKLine = new StaticGridDrawing();
+        staticGridDrawingKLine.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
+        staticGridDrawingKLine.setGridLineSize(getDimension(R.dimen.chart_grid_line_width));
+
+        ExpandedGridDrawing expandedGridDrawing = new ExpandedGridDrawing();
+        staticGridDrawingKLine.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
+        staticGridDrawingKLine.setGridLineSize(getDimension(R.dimen.chart_grid_line_width));
+
+
 
         YAxisDrawing yAxisLeftKLineDrawing = new YAxisDrawing();
         yAxisLeftKLineDrawing.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
@@ -118,7 +125,7 @@ public class KLineActivity3 extends AppCompatActivity {
         yAxisLeftKLineDrawing.setTextUnitSize((int) getDimension(R.dimen.chart_text_unit_size));
         yAxisLeftKLineDrawing.setLeftPadding((int) getDimension(R.dimen.chart_axis_padding));
 
-        chartDrawerKLine.setGridDrawing(gridDrawingKLine);
+        chartDrawerKLine.setStaticGridDrawing(staticGridDrawingKLine);
         chartDrawerKLine.setyAxisLeftDrawing(yAxisLeftKLineDrawing);
 
         final KLineDrawing kLineDrawing = new KLineDrawing();
@@ -133,9 +140,9 @@ public class KLineActivity3 extends AppCompatActivity {
         ChartDrawer chartDrawerRSI = new ChartDrawer();
         chartDrawerRSI.setWeight(1);
 
-        GridDrawing gridDrawingRSI = new GridDrawing();
-        gridDrawingRSI.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
-        gridDrawingRSI.setGridLineSize(getDimension(R.dimen.chart_grid_line_width));
+        StaticGridDrawing staticGridDrawingRSI = new StaticGridDrawing();
+        staticGridDrawingRSI.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
+        staticGridDrawingRSI.setGridLineSize(getDimension(R.dimen.chart_grid_line_width));
 
         YAxisDrawing yAxisLeftRSIDrawing = new YAxisDrawing();
         yAxisLeftRSIDrawing.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
@@ -145,7 +152,7 @@ public class KLineActivity3 extends AppCompatActivity {
         yAxisLeftRSIDrawing.setTextUnitSize((int) getDimension(R.dimen.chart_text_unit_size));
         yAxisLeftRSIDrawing.setLeftPadding((int) getDimension(R.dimen.chart_axis_padding));
 
-        chartDrawerRSI.setGridDrawing(gridDrawingRSI);
+        chartDrawerRSI.setStaticGridDrawing(staticGridDrawingRSI);
         chartDrawerRSI.setyAxisLeftDrawing(yAxisLeftRSIDrawing);
 
         final RSIDrawing rsiDrawing5 = new RSIDrawing();
@@ -167,10 +174,10 @@ public class KLineActivity3 extends AppCompatActivity {
         stockChartDrawer.addChartDrawer(chartKLine, chartDrawerKLine);
         stockChartDrawer.addChartDrawer(chartRSI, chartDrawerRSI);
 
-        stockChartDrawer.getTimelineDrawer().setTextColor(ContextCompat.getColor(this, R.color.chart_text));
-        stockChartDrawer.getTimelineDrawer().setTextSize((int) getDimension(R.dimen.chart_text_size));
-        stockChartDrawer.getTimelineDrawer().setTextYearColor(ContextCompat.getColor(this, R.color.chart_text));
-        stockChartDrawer.getTimelineDrawer().setTextYearSize((int) getDimension(R.dimen.chart_text_size));
+        stockChartDrawer.getStaticTimelineDrawer().setTextColor(ContextCompat.getColor(this, R.color.chart_text));
+        stockChartDrawer.getStaticTimelineDrawer().setTextSize((int) getDimension(R.dimen.chart_text_size));
+        stockChartDrawer.getStaticTimelineDrawer().setTextYearColor(ContextCompat.getColor(this, R.color.chart_text));
+        stockChartDrawer.getStaticTimelineDrawer().setTextYearSize((int) getDimension(R.dimen.chart_text_size));
 
         stockChartView.setStockChart(stockChart);
         stockChartView.setStockChartDrawer(stockChartDrawer);
@@ -190,8 +197,8 @@ public class KLineActivity3 extends AppCompatActivity {
                         float max = range.second;
                         yAxisKLine.setRange(min, max);
 
-                        stockChart.getTimeline().setInitialDate(klines.get(0).openTime);
-                        stockChart.getTimeline().setTimeUnit(TimeUnit.ONE_DAY);
+                        stockChart.getStaticTimeline().setInitialDate(klines.get(0).openTime);
+                        stockChart.getStaticTimeline().setTimeUnit(TimeUnit.ONE_DAY);
 
                         RSISet rsiSet1 = Calculator.rsi(klinesSet, 5);
                         RSISet rsiSet2 = Calculator.rsi(klinesSet, 9);

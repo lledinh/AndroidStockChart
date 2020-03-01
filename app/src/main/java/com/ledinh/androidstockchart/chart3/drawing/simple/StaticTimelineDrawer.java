@@ -1,24 +1,26 @@
-package com.ledinh.androidstockchart.chart3.drawing;
+package com.ledinh.androidstockchart.chart3.drawing.simple;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-import com.ledinh.androidstockchart.chart.YAxis;
-import com.ledinh.androidstockchart.chart3.element.Grid;
-import com.ledinh.androidstockchart.chart3.element.Timeline;
+import com.ledinh.androidstockchart.chart3.drawing.base.BaseTimelineDrawer;
+import com.ledinh.androidstockchart.chart3.element.simple.StaticTimeline;
 import com.ledinh.androidstockchart.chart3.event.TimelineFormatter;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class TimelineDrawer extends StockChartElement {
+public class StaticTimelineDrawer extends BaseTimelineDrawer {
     private Paint paintTextTimeline;
     private Paint paintTextYear;
     private TimelineFormatter timelineFormatter;
 
-    public TimelineDrawer() {
+    private int firstIndex = 0;
+    private int lastIndex = 0;
+
+    public StaticTimelineDrawer() {
         paintTextTimeline = new Paint();
         paintTextTimeline.setAntiAlias(true);
         paintTextYear = new Paint();
@@ -70,22 +72,22 @@ public class TimelineDrawer extends StockChartElement {
                 }
 
                 return textTimeline;
-                return null;
+//                return null;
             }
         };
 
     }
 
-    public TimelineDrawer(Rect position) {
+    public StaticTimelineDrawer(Rect position) {
         super(position);
     }
 
-    public void draw(Canvas canvas, int gridColumns, Timeline timeline) {
-        drawTimeline(canvas, gridColumns, timeline);
+    public void draw(Canvas canvas, int gridColumns, StaticTimeline staticTimeline) {
+        drawTimeline(canvas, gridColumns, staticTimeline);
     }
 
 
-    private void drawTimeline(Canvas canvas, int gridColumns, Timeline timeline) {
+    private void drawTimeline(Canvas canvas, int gridColumns, StaticTimeline staticTimeline) {
         float columnSpace = getWidth() / gridColumns;
 
         Paint.FontMetrics fm = paintTextTimeline.getFontMetrics();
@@ -93,11 +95,11 @@ public class TimelineDrawer extends StockChartElement {
 
         long timestampMid = 0;
 
-        int indexIterationStep = (timeline.getLastIndex() - timeline.getFirstIndex()) / gridColumns;
-        int currentIndex = timeline.getFirstIndex();
+        int indexIterationStep = (staticTimeline.getLastIndex() - staticTimeline.getFirstIndex()) / gridColumns;
+        int currentIndex = staticTimeline.getFirstIndex();
 
         for (int i = 0; i <= gridColumns; i++) {
-            long dateTimestamp = timeline.calculateDate(currentIndex);
+            long dateTimestamp = staticTimeline.calculateDate(currentIndex);
             String timelineText = timelineFormatter.getTimelineText(dateTimestamp);
 
             float textWidth = paintTextTimeline.measureText(timelineText);
@@ -125,7 +127,7 @@ public class TimelineDrawer extends StockChartElement {
     }
 
     public String getDay(long dateTimestamp) {
-
+        return "";
     }
 
     public String getYear(long dateTimestamp) {
@@ -136,20 +138,4 @@ public class TimelineDrawer extends StockChartElement {
         return String.valueOf(year);
     }
 
-
-    public void setTextSize(int size) {
-        paintTextTimeline.setTextSize(size);
-    }
-
-    public void setTextColor(int color) {
-        paintTextTimeline.setColor(color);
-    }
-
-    public void setTextYearSize(int size) {
-        paintTextYear.setTextSize(size);
-    }
-
-    public void setTextYearColor(int color) {
-        paintTextYear.setColor(color);
-    }
 }

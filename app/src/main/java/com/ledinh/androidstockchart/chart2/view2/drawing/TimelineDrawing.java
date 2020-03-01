@@ -2,12 +2,12 @@
 //
 //import android.graphics.Canvas;
 //
-//import com.ledinh.androidstockchart.chart3.element.Timeline;
+//import com.ledinh.androidstockchart.chart3.element.simple.StaticTimeline;
 //
 //public class TimelineDrawing extends UIElement {
-//    private Timeline timeline;
+//    private StaticTimeline timeline;
 //
-//    public TimelineDrawing(Timeline timeline) {
+//    public TimelineDrawing(StaticTimeline timeline) {
 //        this.timeline = timeline;
 //    }
 //

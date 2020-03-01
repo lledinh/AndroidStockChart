@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 import com.ledinh.androidstockchart.chart.YAxis;
-import com.ledinh.androidstockchart.chart3.element.Grid;
+import com.ledinh.androidstockchart.chart3.element.simple.StaticGrid;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -24,16 +24,16 @@ public class YAxisDrawing extends StockChartElement {
         this.leftPadding = 10;
     }
 
-    public void draw(Canvas canvas, Grid grid, YAxis yAxis) {
-        drawYAxis(canvas, grid, yAxis);
+    public void draw(Canvas canvas, StaticGrid staticGrid, YAxis yAxis) {
+        drawYAxis(canvas, staticGrid, yAxis);
     }
 
-    public void drawYAxis(Canvas canvas, Grid grid, YAxis yAxis) {
-        drawAxisValues(canvas, grid, yAxis);
-        drawAxisUnit(canvas, grid, yAxis);
+    public void drawYAxis(Canvas canvas, StaticGrid staticGrid, YAxis yAxis) {
+        drawAxisValues(canvas, staticGrid, yAxis);
+        drawAxisUnit(canvas, staticGrid, yAxis);
     }
 
-    public void drawAxisUnit(Canvas canvas, Grid grid, YAxis yAxis) {
+    public void drawAxisUnit(Canvas canvas, StaticGrid staticGrid, YAxis yAxis) {
         Paint.FontMetrics fm = paintTextUnit.getFontMetrics();
         float textHeight = fm.descent - fm.ascent;
         float baseLine = (textHeight - fm.bottom - fm.top) / 2;
@@ -44,18 +44,18 @@ public class YAxisDrawing extends StockChartElement {
         canvas.drawText(yAxis.getUnit(), position.right - textWidth - 5, position.top + textHeight + 5, paintTextUnit);
     }
 
-    public void drawAxisValues(Canvas canvas, Grid grid, YAxis yAxis) {
+    public void drawAxisValues(Canvas canvas, StaticGrid staticGrid, YAxis yAxis) {
         Paint.FontMetrics fm = paintTextAxis.getFontMetrics();
         float textHeight = fm.descent - fm.ascent;
         float baseLine = (textHeight - fm.bottom - fm.top) / 2;
 
-        int gridRows = grid.getGridRows();
+        int gridRows = staticGrid.getGridRows();
 
         float rowSpace = getHeight() / gridRows;
         float axisMax = (float) yAxis.getAxisMax();
         float axisMin = (float) yAxis.getAxisMin();
 
-        float range = (axisMax - axisMin) / grid.getGridRows();
+        float range = (axisMax - axisMin) / staticGrid.getGridRows();
 
         for (int i = 0; i <= gridRows; i++) {
             NumberFormat formatter = new DecimalFormat("#0");

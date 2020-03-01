@@ -19,7 +19,7 @@
 //import com.ledinh.androidstockchart.chart.util.TimeUnit;
 //import com.ledinh.androidstockchart.chart.util.Viewport;
 //import com.ledinh.androidstockchart.chart.view.element.ChartElement;
-//import com.ledinh.androidstockchart.chart2.view2.drawing.GridDrawing;
+//import com.ledinh.androidstockchart.chart2.view2.drawing.StaticGridDrawing;
 //
 //import java.util.ArrayList;
 //import java.util.List;
@@ -43,8 +43,8 @@
 //
 //    private float translateX = 0;
 //
-//    private Grid grid;
-//    private GridDrawing gridDrawing;
+//    private StaticGrid grid;
+//    private StaticGridDrawing gridDrawing;
 //
 //    private float spaceBetweenValue;
 //    private int screenDataCount;
@@ -77,8 +77,8 @@
 //    }
 //
 //    private void init() {
-//        grid = new Grid();
-//        gridDrawing = new GridDrawing();
+//        grid = new StaticGrid();
+//        gridDrawing = new StaticGridDrawing();
 //
 //        charts = new ArrayList<>();
 //

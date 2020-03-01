@@ -98,11 +98,13 @@ public class StockChartView3 extends View implements GestureDetector.OnGestureLi
         timelineArea.right = w;
         timelineArea.bottom = h;
 
-        stockChartDrawer.getTimelineDrawer().setPosition(new Rect(timelineArea.left, timelineArea.top, timelineArea.right, timelineArea.bottom));
+        stockChartDrawer.getStaticTimelineDrawer().setPosition(new Rect(timelineArea.left, timelineArea.top, timelineArea.right, timelineArea.bottom));
 
         float spaceBetweenValue = (float) getWidth() / stockChartDrawer.getScreenDataCount();
         stockChartDrawer.setSpaceBetweenValue(spaceBetweenValue);
         stockChartDrawer.setPosition(new Rect(chartArea.left, chartArea.top, chartArea.right, chartArea.bottom));
+
+
 
         int weightSum = stockChartDrawer.getWeightSum();
         int oneUnit = (chartArea.bottom - chartArea.top) / weightSum;
@@ -121,7 +123,7 @@ public class StockChartView3 extends View implements GestureDetector.OnGestureLi
 
                 Rect position = new Rect(left, top, right, bottom);
                 chartDrawer.setPosition(position);
-                chartDrawer.getGridDrawing().setPosition(position);
+                chartDrawer.getStaticGridDrawing().setPosition(position);
                 chartDrawer.getyAxisLeftDrawing().setPosition(position);
 
                 top += weight * oneUnit;
@@ -137,7 +139,7 @@ public class StockChartView3 extends View implements GestureDetector.OnGestureLi
 //
 //            Rect position = new Rect(left, top, right, bottom);
 //            chartDrawer.setPosition(position);
-//            chartDrawer.getGridDrawing().setPosition(position);
+//            chartDrawer.getStaticGridDrawing().setPosition(position);
 //            chartDrawer.getyAxisLeftDrawing().setPosition(position);
 //
 //            top += weight * oneUnit;
@@ -150,7 +152,7 @@ public class StockChartView3 extends View implements GestureDetector.OnGestureLi
         super.onDraw(canvas);
         canvas.drawColor(ContextCompat.getColor(getContext(), R.color.chart_background));
 
-        stockChartDrawer.draw(canvas, stockChart.getTimeline(), translateX);
+        stockChartDrawer.draw(canvas, stockChart.getStaticTimeline(), translateX);
     }
 
     public StockChart getStockChart() {
@@ -232,7 +234,7 @@ public class StockChartView3 extends View implements GestureDetector.OnGestureLi
             chart.onRangeChange(firstValueIndex, lastValueIndex);
         }
 
-        stockChart.getTimeline().onRangeChange(firstValueIndex, lastValueIndex);
+        stockChart.getStaticTimeline().onRangeChange(firstValueIndex, lastValueIndex);
     }
 
     @Override
