@@ -1,4 +1,4 @@
-package com.ledinh.androidstockchart.chart3.base;
+package com.ledinh.androidstockchart.chart3.event;
 
 public interface OnScrollEndListener {
     void onScrollEnd();

@@ -4,12 +4,16 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 
 import com.ledinh.androidstockchart.chart3.element.Chart;
+import com.ledinh.androidstockchart.chart3.element.Timeline;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class StockChartDrawer extends StockChartElement {
     private Map<Chart, ChartDrawer> chartDrawers;
+    private List<Chart> chartDrawersOrders;
     private TimelineDrawer timelineDrawer;
 
     private float spaceBetweenValue;
@@ -17,24 +21,40 @@ public class StockChartDrawer extends StockChartElement {
 
     public StockChartDrawer() {
         chartDrawers = new HashMap<>();
+        chartDrawersOrders = new ArrayList<>();
+        timelineDrawer = new TimelineDrawer();
     }
 
     public StockChartDrawer(Rect position) {
         super(position);
     }
 
-    public void draw(Canvas canvas, float translateX) {
-        for(Map.Entry<Chart, ChartDrawer> entry : chartDrawers.entrySet()) {
-            Chart chart = entry.getKey();
-            ChartDrawer chartDrawer = entry.getValue();
+    public void draw(Canvas canvas, Timeline timeline, float translateX) {
+        for (Chart chart : chartDrawersOrders) {
+            ChartDrawer chartDrawer = chartDrawers.get(chart);
 
-            chartDrawer.draw(canvas, chart, translateX);
+            if (chartDrawer != null) {
+                chartDrawer.draw(canvas, chart, translateX);
+            }
         }
+
+        timelineDrawer.draw(canvas, 5, timeline);
     }
 
+    public int getWeightSum() {
+        int sum = 0;
+
+        for(Map.Entry<Chart, ChartDrawer> entry : chartDrawers.entrySet()) {
+            int weight = entry.getValue().getWeight();
+            sum += weight;
+        }
+
+        return sum;
+    }
 
     public void addChartDrawer(Chart chart, ChartDrawer chartDrawer) {
         chartDrawers.put(chart, chartDrawer);
+        chartDrawersOrders.add(chart);
     }
 
     public TimelineDrawer getTimelineDrawer() {
@@ -74,5 +94,13 @@ public class StockChartDrawer extends StockChartElement {
                 chartElementDrawer.setSpaceBetweenValue(spaceBetweenValue);
             }
         }
+    }
+
+    public List<Chart> getChartDrawersOrders() {
+        return chartDrawersOrders;
+    }
+
+    public void setChartDrawersOrders(List<Chart> chartDrawersOrders) {
+        this.chartDrawersOrders = chartDrawersOrders;
     }
 }

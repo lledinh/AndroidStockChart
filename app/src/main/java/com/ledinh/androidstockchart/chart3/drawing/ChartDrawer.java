@@ -1,6 +1,7 @@
 package com.ledinh.androidstockchart.chart3.drawing;
 
 import android.graphics.Canvas;
+import android.graphics.Rect;
 
 import com.ledinh.androidstockchart.chart3.element.Chart;
 import com.ledinh.androidstockchart.chart3.element.ChartElement;
@@ -27,6 +28,15 @@ public class ChartDrawer extends StockChartElement {
             ChartElementDrawer chartElementDrawer = chartElementDrawers.get(i);
 
             chartElementDrawer.draw(canvas, chartElement.getData(), chart.getyAxisLeft(), translateX);
+        }
+    }
+
+    @Override
+    public void setPosition(Rect position) {
+        super.setPosition(position);
+
+        for (ChartElementDrawer chartElementDrawer: chartElementDrawers) {
+            chartElementDrawer.setPosition(position);
         }
     }
 

@@ -1,6 +1,5 @@
 package com.ledinh.androidstockchart.chart3;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
@@ -18,26 +17,22 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
-import com.ledinh.androidstockchart.KLineActivity2;
 import com.ledinh.androidstockchart.R;
 import com.ledinh.androidstockchart.chart.YAxis;
 import com.ledinh.androidstockchart.chart.model.Kline;
 import com.ledinh.androidstockchart.chart.set.KlinesSet;
 import com.ledinh.androidstockchart.chart.set.RSISet;
 import com.ledinh.androidstockchart.chart.util.TimeUnit;
-import com.ledinh.androidstockchart.chart.util.Viewport;
-import com.ledinh.androidstockchart.chart.view.element.RSIElement;
-import com.ledinh.androidstockchart.chart3.base.OnTranslateListener;
 import com.ledinh.androidstockchart.chart3.drawing.ChartDrawer;
-import com.ledinh.androidstockchart.chart3.drawing.ChartElementDrawer;
 import com.ledinh.androidstockchart.chart3.drawing.GridDrawing;
 import com.ledinh.androidstockchart.chart3.drawing.KLineDrawing;
+import com.ledinh.androidstockchart.chart3.drawing.RSIDrawing;
 import com.ledinh.androidstockchart.chart3.drawing.StockChartDrawer;
 import com.ledinh.androidstockchart.chart3.drawing.YAxisDrawing;
 import com.ledinh.androidstockchart.chart3.element.Chart;
-import com.ledinh.androidstockchart.chart3.element.ChartElement;
 import com.ledinh.androidstockchart.chart3.element.Grid;
 import com.ledinh.androidstockchart.chart3.element.KLineElement;
+import com.ledinh.androidstockchart.chart3.element.RSIElement;
 import com.ledinh.androidstockchart.chart3.element.StockChart;
 import com.ledinh.androidstockchart.math.Calculator;
 
@@ -62,57 +57,120 @@ public class KLineActivity3 extends AppCompatActivity {
 
         stockChartView = findViewById(R.id.chart);
 
-        StockChart stockChart = new StockChart();
+        final StockChart stockChart = new StockChart();
 
-        Grid grid = new Grid(5, 5);
+        ///////////// KLINE /////////////
+        Grid gridKLine = new Grid(5, stockChart.getColumns());
 
-        final YAxis yAxis = new YAxis();
-        yAxis.setAxisMax(100);
-        yAxis.setAxisMin(0);
+        final YAxis yAxisKLine = new YAxis();
+        yAxisKLine.setAxisMax(100);
+        yAxisKLine.setAxisMin(0);
 
-        Chart chart = new Chart();
-        chart.setGrid(grid);
-        chart.setyAxisLeft(yAxis);
-        chart.setAutoScale(true);
+        Chart chartKLine = new Chart();
+        chartKLine.setGrid(gridKLine);
+        chartKLine.setyAxisLeft(yAxisKLine);
+        chartKLine.setAutoScale(true);
 
         final KLineElement kLineElement = new KLineElement();
-        chart.addChartElement(kLineElement);
+        chartKLine.addChartElement(kLineElement);
+        ////////////////////////////////
 
-        stockChart.addChart(chart);
 
+        ///////////// RSI /////////////
+        Grid gridRSI = new Grid(5, stockChart.getColumns());
 
-        StockChartDrawer stockChartDrawer = new StockChartDrawer();
+        final YAxis yAxisRSI = new YAxis();
+        yAxisKLine.setAxisMax(100);
+        yAxisKLine.setAxisMin(0);
+
+        Chart chartRSI = new Chart();
+        chartRSI.setGrid(gridRSI);
+        chartRSI.setyAxisLeft(yAxisRSI);
+        chartRSI.setAutoScale(false);
+
+        final RSIElement rsiElement5 = new RSIElement();
+        final RSIElement rsiElement9 = new RSIElement();
+        final RSIElement rsiElement14 = new RSIElement();
+        chartRSI.addChartElement(rsiElement5);
+        chartRSI.addChartElement(rsiElement9);
+        chartRSI.addChartElement(rsiElement14);
+        ////////////////////////////////
+
+        stockChart.addChart(chartKLine);
+        stockChart.addChart(chartRSI);
+
+        final StockChartDrawer stockChartDrawer = new StockChartDrawer();
         stockChartDrawer.setScreenDataCount(60);
 
-        ChartDrawer chartDrawer = new ChartDrawer();
+        //////////////////
+        ChartDrawer chartDrawerKLine = new ChartDrawer();
+        chartDrawerKLine.setWeight(4);
 
-        GridDrawing gridDrawing = new GridDrawing();
-        gridDrawing.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
-        gridDrawing.setGridLineSize(getDimension(R.dimen.chart_grid_line_width));
+        GridDrawing gridDrawingKLine = new GridDrawing();
+        gridDrawingKLine.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
+        gridDrawingKLine.setGridLineSize(getDimension(R.dimen.chart_grid_line_width));
 
-        YAxisDrawing yAxisLeftDrawing = new YAxisDrawing();
-        yAxisLeftDrawing.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
-        yAxisLeftDrawing.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
-        yAxisLeftDrawing.setTextAxisBackgroundColor(ContextCompat.getColor(this, R.color.chart_background2));
-        yAxisLeftDrawing.setTextUnitColor(ContextCompat.getColor(this, R.color.chart_text));
-        yAxisLeftDrawing.setTextUnitSize((int) getDimension(R.dimen.chart_text_unit_size));
-        yAxisLeftDrawing.setLeftPadding((int) getDimension(R.dimen.chart_axis_padding));
+        YAxisDrawing yAxisLeftKLineDrawing = new YAxisDrawing();
+        yAxisLeftKLineDrawing.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
+        yAxisLeftKLineDrawing.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
+        yAxisLeftKLineDrawing.setTextAxisBackgroundColor(ContextCompat.getColor(this, R.color.chart_background2));
+        yAxisLeftKLineDrawing.setTextUnitColor(ContextCompat.getColor(this, R.color.chart_text));
+        yAxisLeftKLineDrawing.setTextUnitSize((int) getDimension(R.dimen.chart_text_unit_size));
+        yAxisLeftKLineDrawing.setLeftPadding((int) getDimension(R.dimen.chart_axis_padding));
 
-        chartDrawer.setGridDrawing(gridDrawing);
-        chartDrawer.setyAxisLeftDrawing(yAxisLeftDrawing);
+        chartDrawerKLine.setGridDrawing(gridDrawingKLine);
+        chartDrawerKLine.setyAxisLeftDrawing(yAxisLeftKLineDrawing);
 
         final KLineDrawing kLineDrawing = new KLineDrawing();
         kLineDrawing.getPaintDecreasing().setColor(ContextCompat.getColor(KLineActivity3.this, R.color.chart_red));
         kLineDrawing.getPaintIncreasing().setColor(ContextCompat.getColor(KLineActivity3.this, R.color.chart_green));
         kLineDrawing.setKlineWidth(getDimension(R.dimen.chart_kline_width));
         kLineDrawing.setKlineInnerLineWidth(getDimension(R.dimen.chart_kline_inner_width));
-        kLineDrawing.setSpaceBetweenValue(10);
 
+        chartDrawerKLine.addChartElementDrawer(kLineDrawing);
 
-        chartDrawer.addChartElementDrawer(kLineDrawing);
+        ///////////////
+        ChartDrawer chartDrawerRSI = new ChartDrawer();
+        chartDrawerRSI.setWeight(1);
 
-        stockChartDrawer.addChartDrawer(chart, chartDrawer);
+        GridDrawing gridDrawingRSI = new GridDrawing();
+        gridDrawingRSI.setGridLineColor(ContextCompat.getColor(this, R.color.chart_grid_line));
+        gridDrawingRSI.setGridLineSize(getDimension(R.dimen.chart_grid_line_width));
 
+        YAxisDrawing yAxisLeftRSIDrawing = new YAxisDrawing();
+        yAxisLeftRSIDrawing.setTextAxisSize((int) getDimension(R.dimen.chart_text_size));
+        yAxisLeftRSIDrawing.setTextAxisColor(ContextCompat.getColor(this, R.color.chart_text));
+        yAxisLeftRSIDrawing.setTextAxisBackgroundColor(ContextCompat.getColor(this, R.color.chart_background2));
+        yAxisLeftRSIDrawing.setTextUnitColor(ContextCompat.getColor(this, R.color.chart_text));
+        yAxisLeftRSIDrawing.setTextUnitSize((int) getDimension(R.dimen.chart_text_unit_size));
+        yAxisLeftRSIDrawing.setLeftPadding((int) getDimension(R.dimen.chart_axis_padding));
+
+        chartDrawerRSI.setGridDrawing(gridDrawingRSI);
+        chartDrawerRSI.setyAxisLeftDrawing(yAxisLeftRSIDrawing);
+
+        final RSIDrawing rsiDrawing5 = new RSIDrawing();
+        rsiDrawing5.setLineColor(ContextCompat.getColor(KLineActivity3.this, R.color.chart_rsi1));
+        rsiDrawing5.setLineWidth(getDimension(R.dimen.chart_rsi_line_width));
+        final RSIDrawing rsiDrawing9 = new RSIDrawing();
+        rsiDrawing9.setLineColor(ContextCompat.getColor(KLineActivity3.this, R.color.chart_rsi2));
+        rsiDrawing9.setLineWidth(getDimension(R.dimen.chart_rsi_line_width));
+        final RSIDrawing rsiDrawing14 = new RSIDrawing();
+        rsiDrawing14.setLineColor(ContextCompat.getColor(KLineActivity3.this, R.color.chart_rsi3));
+        rsiDrawing14.setLineWidth(getDimension(R.dimen.chart_rsi_line_width));
+
+        chartDrawerRSI.addChartElementDrawer(rsiDrawing5);
+        chartDrawerRSI.addChartElementDrawer(rsiDrawing9);
+        chartDrawerRSI.addChartElementDrawer(rsiDrawing14);
+
+        ///////////////
+
+        stockChartDrawer.addChartDrawer(chartKLine, chartDrawerKLine);
+        stockChartDrawer.addChartDrawer(chartRSI, chartDrawerRSI);
+
+        stockChartDrawer.getTimelineDrawer().setTextColor(ContextCompat.getColor(this, R.color.chart_text));
+        stockChartDrawer.getTimelineDrawer().setTextSize((int) getDimension(R.dimen.chart_text_size));
+        stockChartDrawer.getTimelineDrawer().setTextYearColor(ContextCompat.getColor(this, R.color.chart_text));
+        stockChartDrawer.getTimelineDrawer().setTextYearSize((int) getDimension(R.dimen.chart_text_size));
 
         stockChartView.setStockChart(stockChart);
         stockChartView.setStockChartDrawer(stockChartDrawer);
@@ -130,7 +188,18 @@ public class KLineActivity3 extends AppCompatActivity {
                         Pair<Integer, Integer> range = klinesSet.getRange();
                         float min = range.first;
                         float max = range.second;
-                        yAxis.setRange(min, max);
+                        yAxisKLine.setRange(min, max);
+
+                        stockChart.getTimeline().setInitialDate(klines.get(0).openTime);
+                        stockChart.getTimeline().setTimeUnit(TimeUnit.ONE_DAY);
+
+                        RSISet rsiSet1 = Calculator.rsi(klinesSet, 5);
+                        RSISet rsiSet2 = Calculator.rsi(klinesSet, 9);
+                        RSISet rsiSet3 = Calculator.rsi(klinesSet, 14);
+                        rsiElement5.setData(rsiSet1);
+                        rsiElement9.setData(rsiSet2);
+                        rsiElement14.setData(rsiSet3);
+                        yAxisRSI.setRange(0, 100);
 
                         stockChartView.invalidate();
 

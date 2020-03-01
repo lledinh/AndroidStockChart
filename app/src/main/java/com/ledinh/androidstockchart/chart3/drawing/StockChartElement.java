@@ -4,9 +4,11 @@ import android.graphics.Rect;
 
 public class StockChartElement {
     protected Rect position;
+    protected int weight;
 
     public StockChartElement() {
         position = new Rect();
+        weight = 1;
     }
 
     public StockChartElement(Rect position) {
@@ -59,5 +61,13 @@ public class StockChartElement {
 
     public void setPosition(Rect position) {
         this.position = position;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 }

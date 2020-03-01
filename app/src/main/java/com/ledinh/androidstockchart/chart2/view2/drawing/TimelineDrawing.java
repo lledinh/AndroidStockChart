@@ -2,7 +2,7 @@
 //
 //import android.graphics.Canvas;
 //
-//import com.ledinh.androidstockchart.chart2.view2.Timeline;
+//import com.ledinh.androidstockchart.chart3.element.Timeline;
 //
 //public class TimelineDrawing extends UIElement {
 //    private Timeline timeline;

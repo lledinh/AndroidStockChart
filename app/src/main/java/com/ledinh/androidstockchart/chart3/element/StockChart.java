@@ -1,16 +1,17 @@
 package com.ledinh.androidstockchart.chart3.element;
 
-import com.ledinh.androidstockchart.chart2.view2.Timeline;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class StockChart {
     private List<Chart> charts;
     private Timeline timeline;
+    private int columns;
 
     public StockChart() {
         charts = new ArrayList<>();
+        timeline = new Timeline();
+        columns = 5;
     }
 
     public void addChart(Chart chart) {
@@ -31,5 +32,13 @@ public class StockChart {
 
     public void setTimeline(Timeline timeline) {
         this.timeline = timeline;
+    }
+
+    public int getColumns() {
+        return columns;
+    }
+
+    public void setColumns(int columns) {
+        this.columns = columns;
     }
 }

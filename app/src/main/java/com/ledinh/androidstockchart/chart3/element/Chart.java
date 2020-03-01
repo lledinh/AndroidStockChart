@@ -4,9 +4,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.ledinh.androidstockchart.chart.YAxis;
-import com.ledinh.androidstockchart.chart3.base.OnRangeChangeListener;
-import com.ledinh.androidstockchart.chart3.base.OnTranslateListener;
-import com.ledinh.androidstockchart.chart3.drawing.StockChartElement;
+import com.ledinh.androidstockchart.chart3.event.OnRangeChangeListener;
 
 import java.util.ArrayList;
 import java.util.List;

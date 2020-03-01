@@ -4,8 +4,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,12 +14,9 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GestureDetectorCompat;
 
 import com.ledinh.androidstockchart.R;
-import com.ledinh.androidstockchart.chart3.base.OnRangeChangeListener;
-import com.ledinh.androidstockchart.chart3.base.OnScrollEndListener;
-import com.ledinh.androidstockchart.chart3.base.OnScrollMinListener;
-import com.ledinh.androidstockchart.chart3.base.OnTranslateListener;
+import com.ledinh.androidstockchart.chart3.event.OnScrollEndListener;
+import com.ledinh.androidstockchart.chart3.event.OnScrollMinListener;
 import com.ledinh.androidstockchart.chart3.drawing.ChartDrawer;
-import com.ledinh.androidstockchart.chart3.drawing.ChartElementDrawer;
 import com.ledinh.androidstockchart.chart3.drawing.StockChartDrawer;
 import com.ledinh.androidstockchart.chart3.element.Chart;
 import com.ledinh.androidstockchart.chart3.element.ChartElement;
@@ -29,7 +24,6 @@ import com.ledinh.androidstockchart.chart3.element.StockChart;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class StockChartView3 extends View implements GestureDetector.OnGestureListener {
 
@@ -50,8 +44,6 @@ public class StockChartView3 extends View implements GestureDetector.OnGestureLi
 
     private List<OnScrollMinListener> onScrollMinListeners;
     private List<OnScrollEndListener> onScrollEndListeners;
-    private List<OnRangeChangeListener> onRangeChangeListeners;
-
 
     public StockChartView3(Context context) {
         super(context);
@@ -83,7 +75,6 @@ public class StockChartView3 extends View implements GestureDetector.OnGestureLi
     private void init() {
         onScrollEndListeners = new ArrayList<>();
         onScrollMinListeners = new ArrayList<>();
-        onRangeChangeListeners = new ArrayList<>();
 
         gestureDetector = new GestureDetectorCompat(getContext(), this);
         overScroller = new OverScroller(getContext());
@@ -102,30 +93,56 @@ public class StockChartView3 extends View implements GestureDetector.OnGestureLi
         chartArea.right = w;
         chartArea.bottom = h - h / 6;
 
-        titleArea.left = 0;
-        titleArea.top = 0;
-        titleArea.right = w;
-        titleArea.bottom = h - h / 6;
-
         timelineArea.left = 0;
         timelineArea.top = h - h / 6;
         timelineArea.right = w;
         timelineArea.bottom = h;
 
+        stockChartDrawer.getTimelineDrawer().setPosition(new Rect(timelineArea.left, timelineArea.top, timelineArea.right, timelineArea.bottom));
+
         float spaceBetweenValue = (float) getWidth() / stockChartDrawer.getScreenDataCount();
         stockChartDrawer.setSpaceBetweenValue(spaceBetweenValue);
-
         stockChartDrawer.setPosition(new Rect(chartArea.left, chartArea.top, chartArea.right, chartArea.bottom));
 
-        for (Map.Entry<Chart, ChartDrawer> pair: stockChartDrawer.getChartDrawers().entrySet()) {
-            ChartDrawer chartDrawer = pair.getValue();
-            chartDrawer.setPosition(new Rect(chartArea.left, chartArea.top, chartArea.right, chartArea.bottom));
-            chartDrawer.getGridDrawing().setPosition(new Rect(chartArea.left, chartArea.top, chartArea.right, chartArea.bottom));
-            chartDrawer.getyAxisLeftDrawing().setPosition(new Rect(chartArea.left, chartArea.top, chartArea.right, chartArea.bottom));
-            for (ChartElementDrawer chartElementDrawer: chartDrawer.getChartElementDrawers()) {
-                chartElementDrawer.setPosition(new Rect(chartArea.left, chartArea.top, chartArea.right, chartArea.bottom));
+        int weightSum = stockChartDrawer.getWeightSum();
+        int oneUnit = (chartArea.bottom - chartArea.top) / weightSum;
+
+        int left = chartArea.left;
+        int right = chartArea.right;
+        int top = chartArea.top;
+        int bottom = chartArea.top;
+
+        for(Chart chart: stockChartDrawer.getChartDrawersOrders()) {
+            ChartDrawer chartDrawer = stockChartDrawer.getChartDrawers().get(chart);
+
+            if (chartDrawer != null) {
+                int weight = chartDrawer.getWeight();
+                bottom += weight * oneUnit;
+
+                Rect position = new Rect(left, top, right, bottom);
+                chartDrawer.setPosition(position);
+                chartDrawer.getGridDrawing().setPosition(position);
+                chartDrawer.getyAxisLeftDrawing().setPosition(position);
+
+                top += weight * oneUnit;
             }
         }
+
+//        for(Map.Entry<Chart, ChartDrawer> entry : stockChartDrawer.getChartDrawers().entrySet()) {
+//            Chart chart = entry.getKey();
+//            ChartDrawer chartDrawer = entry.getValue();
+//
+//            int weight = chartDrawer.getWeight();
+//            bottom += weight * oneUnit;
+//
+//            Rect position = new Rect(left, top, right, bottom);
+//            chartDrawer.setPosition(position);
+//            chartDrawer.getGridDrawing().setPosition(position);
+//            chartDrawer.getyAxisLeftDrawing().setPosition(position);
+//
+//            top += weight * oneUnit;
+//        }
+
     }
 
     @Override
@@ -133,7 +150,7 @@ public class StockChartView3 extends View implements GestureDetector.OnGestureLi
         super.onDraw(canvas);
         canvas.drawColor(ContextCompat.getColor(getContext(), R.color.chart_background));
 
-        stockChartDrawer.draw(canvas, translateX);
+        stockChartDrawer.draw(canvas, stockChart.getTimeline(), translateX);
     }
 
     public StockChart getStockChart() {
@@ -196,47 +213,6 @@ public class StockChartView3 extends View implements GestureDetector.OnGestureLi
     public int getIndexFromX(int x) {
         return (int) (x / stockChartDrawer.getSpaceBetweenValue());
     }
-//
-//    private void scaleAxis() {
-//////        int firstValueIndex = (int) (lastValueIndex - getScreenDataCount());
-//////        int lastValueIndex = getIndexFromX((int) (viewportChartView.getViewWidth() - translateX));
-//        int firstValueIndex = getIndexFromX(Math.abs(translateX));
-//        int lastValueIndex = firstValueIndex + stockChartDrawer.getScreenDataCount();
-//        if (lastValueIndex >= 500) {
-//            lastValueIndex = 499;
-//        }
-//
-//        Log.d("StockChartView3", "scaleAxis firstValueIndex = " + firstValueIndex);
-//        Log.d("StockChartView3", "scaleAxis lastValueIndex = " + lastValueIndex);
-//
-//
-//        for (Chart chart : stockChart.getCharts()) {
-//            if (chart.isAutoScale()) {
-//                List<ChartElement> chartElements = chart.getChartElements();
-//
-//                int min = Integer.MAX_VALUE;
-//                int max = Integer.MIN_VALUE;
-//
-//                for (ChartElement chartElement : chartElements) {
-//                    Pair<Integer, Integer> range = chartElement.getRange(firstValueIndex, lastValueIndex);
-//
-//                    if (range.first < min) {
-//                        min = range.first;
-//                    }
-//
-//                    if (range.second > max) {
-//                        max = range.second;
-//                    }
-//                }
-//
-//                Log.d("StockChartView3", "scaleAxis min = " + min);
-//                Log.d("StockChartView3", "scaleAxis max = " + max);
-//
-//                chart.getyAxisLeft().setRange(min, max);
-//                chart.getyAxisLeft().extendRange(10);
-//            }
-//        }
-//    }
 
     @Override
     public void computeScroll() {
@@ -249,14 +225,14 @@ public class StockChartView3 extends View implements GestureDetector.OnGestureLi
             }
         }
 
-
         int firstValueIndex = getIndexFromX(Math.abs(translateX));
         int lastValueIndex = firstValueIndex + stockChartDrawer.getScreenDataCount();
 
         for (Chart chart: stockChart.getCharts()) {
             chart.onRangeChange(firstValueIndex, lastValueIndex);
-            Log.d("StockChartView3", "onRangeChange");
         }
+
+        stockChart.getTimeline().onRangeChange(firstValueIndex, lastValueIndex);
     }
 
     @Override
@@ -282,7 +258,6 @@ public class StockChartView3 extends View implements GestureDetector.OnGestureLi
         translateX = scrollX;
 
         invalidate();
-        Log.d("StockChartView3", "translateX = " + translateX);
     }
 
     @Override
@@ -305,24 +280,17 @@ public class StockChartView3 extends View implements GestureDetector.OnGestureLi
     }
 
     private int getTranslationMinValue() {
-//        int maxIndex = 0;
-//        for (Chart chart : charts) {
-//            List<ChartElement> chartComponents = chart.getChartComponents();
-//            for (ChartElement chartElement: chartComponents) {
-//                if (chartElement.getMaxIndex() > maxIndex) {
-//                    maxIndex = chartElement.getMaxIndex();
-//                }
-//            }
-//        }
-//
-//        Log.d("StockChartView", "spaceBetweenValue = " + spaceBetweenValue);
-//        Log.d("StockChartView", "maxIndex = " + maxIndex);
-//        Log.d("StockChartView", "viewportChartView.getViewWidth = " + viewportChartView.getViewWidth());
-//        Log.d("StockChartView", "getTranslationMinValue = " + (- (maxIndex * spaceBetweenValue - viewportChartView.getViewWidth())));
-//        Log.d("StockChartView", "maxIndex * spaceBetweenValue = " + (- (maxIndex * spaceBetweenValue)));
-//
-//        return (int) - (maxIndex * spaceBetweenValue - viewportChartView.getViewWidth() / 2);
-        return -10000;
+        int maxIndex = 0;
+        for (Chart chart : stockChart.getCharts()) {
+            List<ChartElement> chartComponents = chart.getChartElements();
+            for (ChartElement chartElement: chartComponents) {
+                if (chartElement.getData().getDataSize() > maxIndex) {
+                    maxIndex = chartElement.getData().getDataSize();
+                }
+            }
+        }
+
+        return (int) - (maxIndex * stockChartDrawer.getSpaceBetweenValue() - getWidth() / 2);
     }
 
 
